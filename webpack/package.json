@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "css-loader": "^6.2.0",
+    "style-loader": "^3.2.1"
+  }
+}
