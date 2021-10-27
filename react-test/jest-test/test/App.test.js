@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
-import App from './App';
+import SearchBar from 'src/SearchBar';
 
 test('renders learn react link', () => {
-  render(<App />);
+  render(<SearchBar />);
   screen.debug()
 });
