@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import {Navbar, Container, NavDropdown, Nav} from 'react-bootstrap'
-import SearchComponent from './SearchBar'
+import SearchComponent from './components/SearchBar'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function App(props) {

@@ -1,9 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import { unmountComponentAtNode } from 'react-dom'
+import '@testing-library/jest-dom'
 
 //component test
-import SearchBar from '../SearchBar';
-
+import SearchBar from '../components/SearchBar';
+import NotFound from '../components/NotFound';
 let driver = null //마운팅 될 대상
 
 beforeEach(() => {
@@ -19,7 +20,7 @@ afterEach(() => {
   driver = null;
 })
 
-describe('Search 시나리오', () => {
+describe('<SearchBar/>', () => {
   it('DOM 구조 확인', () => {
     render(<SearchBar />);
     screen.debug()
@@ -30,3 +31,10 @@ describe('Search 시나리오', () => {
   })  
 })
 
+describe("<NotFound />", () => {
+  it("텍스트 출력 확인", () => {
+    const { getByText } = render(<NotFound path='abc' />);
+    const header = getByText("Page Not Found");
+    expect(header).toBeInTheDocument();
+  });
+});
