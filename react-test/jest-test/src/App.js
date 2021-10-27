@@ -27,7 +27,7 @@ export default function App(props) {
         </Container>
       </Navbar><br/>
       <Container>
-        <SearchComponent onChange={setQuery}/>
+        <SearchComponent onChange={setQuery} placeholder='Input your query'/>
       </Container>
     </section>
   )

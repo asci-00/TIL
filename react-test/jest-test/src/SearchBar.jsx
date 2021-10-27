@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {InputGroup, FormControl, Button, Alert} from 'react-bootstrap'
 
 export default function Component(props) {
-  const { onChange, onSubmit } = props
+  const { onChange, onSubmit, placeholder = 'placeholder' } = props
   const [val, setValue] = useState('')
 
   return (
@@ -17,7 +17,7 @@ export default function Component(props) {
             />
             <Button variant="outline-secondary" id="button-addon2" onClick={()=>onSubmit(val)}>Search</Button>
         </InputGroup>
-        <Alert variant='dark'>{val ? val : 'Input your text'}</Alert>
+        <Alert variant='dark'>{val ? val : placeholder}</Alert>
     </form>
   )
 }

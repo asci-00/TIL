@@ -27,7 +27,7 @@ exports[`Search 시나리오 스냅샷 확인 1`] = `
       class="fade alert alert-dark show"
       role="alert"
     >
-      Input your text
+      placeholder
     </div>
   </form>
 </div>
