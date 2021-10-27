@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {Navbar, Container, NavDropdown, Nav} from 'react-bootstrap'
 import SearchComponent from './SearchBar'
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function App(props) {
-
+  const [query, setQuery] = useState('')
   return (
     <section id='root-wrapper'>
       <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
@@ -27,7 +27,7 @@ export default function App(props) {
         </Container>
       </Navbar><br/>
       <Container>
-        <SearchComponent/>
+        <SearchComponent onChange={setQuery}/>
       </Container>
     </section>
   )
