@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Search 시나리오 스냅샷 확인 1`] = `
+<div>
+  <form
+    id="search-bar"
+  >
+    <div
+      class="mb-3 input-group"
+    >
+      <input
+        aria-describedby="basic-addon2"
+        aria-label="Recipient's username"
+        class="form-control"
+        placeholder="Recipient's username"
+        value=""
+      />
+      <button
+        class="btn btn-outline-secondary"
+        id="button-addon2"
+        type="button"
+      >
+        Search
+      </button>
+    </div>
+    <div
+      class="fade alert alert-dark show"
+      role="alert"
+    >
+      Input your text
+    </div>
+  </form>
+</div>
+`;
