@@ -2,7 +2,16 @@
 
 ### Part1. Development Common Sense 
 [개발 기본 상식 (21.11.02)](https://github.com/asci-00/TIL/blob/main/CS/DevelopmentCommonSense.md)
-
+- 좋은 코드
+- 객체 지향 프로그래밍 OOP
+- RESTful API
+- TDD
+- 함수형 프로그래밍
+- MVC 패턴
+- Git Github
+[운영체제 OperatingSystem](https://github.com/asci-00/TIL/blob/main/CS/OS)
+- [운영체제 (21.11.03)](https://github.com/asci-00/TIL/blob/main/OS/OperatingSystem.md)
+- [프로세스 & 스레드 (21.11.03)](https://github.com/asci-00/TIL/blob/main/OS/ProcessThread.md)
 ---
 ### 공부 참고
 [JaeYeopHan님 github](https://github.com/JaeYeopHan/Interview_Question_for_Beginner)<br/>
