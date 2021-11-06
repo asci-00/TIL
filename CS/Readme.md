@@ -10,9 +10,16 @@
 - MVC 패턴
 - Git Github
 
-[운영체제 OperatingSystem](https://github.com/asci-00/TIL/blob/main/CS/OS)
-- [운영체제 (21.11.03)](https://github.com/asci-00/TIL/blob/main/OS/OperatingSystem.md)
-- [프로세스 & 스레드 (21.11.03)](https://github.com/asci-00/TIL/blob/main/OS/ProcessThread.md)
+[운영체제 OperatingSystem](https://github.com/asci-00/TIL/tree/main/CS/OS)
+- 운영체제 (21.11.03)
+- 프로세스 & 스레드 (21.11.04)
+- 인터럽트와 시스템콜
+- 데드락
+
+[네트워크 Network](https://github.com/asci-00/TIL/tree/main/CS/Network)
+- OSI 7계층 (21.11.05)
+- 
+
 ---
 ### 공부 참고
 [JaeYeopHan님 github](https://github.com/JaeYeopHan/Interview_Question_for_Beginner)<br/>
