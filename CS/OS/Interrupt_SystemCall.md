@@ -113,7 +113,14 @@ int main(int argc, char *argv[]) {
 > 
 > exec 계열은 여러 종류의 함수가 존재함
 
-![](https://t1.daumcdn.net/cfile/tistory/165E9A3D4FB332DA03)*[출처]https://bbolmin.tistory.com/35*
+| 함수 이름	| 프로그램 지정	| 명령라인 인수	| 함수 설명 |
+|---|---|---|---|
+| execl	| 디렉토리와 파일 이름이 합친 전체 이름	| 인수 리스트	| 환경 설정 불가  |
+| execlp |	파일 이름| 	인수 리스트| 	환경 설정 불가 |
+| execle |	디렉토리와 파일 이름이 합친 전체 이름| 	인수 리스트| 	환경 설정 가능 |
+| execv |	디렉토리와 파일 이름이 합친 전체 이름| 	인수 배열| 	환경 설정 불가 |
+| execvp |	파일 이름	| 인수 배열| 환경 설정 불가 |
+| excve |	전제 경로 명| 	인수 배열	| 환경 설정 가능 |
 
 ```
 #include <stdio.h>
