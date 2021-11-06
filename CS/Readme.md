@@ -18,7 +18,7 @@
 
 [네트워크 Network](https://github.com/asci-00/TIL/tree/main/CS/Network)
 - OSI 7계층 (21.11.05)
-- 
+- TCP와 UDP (21.11.05)
 
 ---
 ### 공부 참고
