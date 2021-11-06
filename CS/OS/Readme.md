@@ -5,3 +5,7 @@
 
 목차
 - [프로세스와 스레드](https://github.com/asci-00/TIL/tree/main/CS/OS/Process_Thread.md)
+- [데드락-교착상태](https://github.com/asci-00/TIL/blob/main/CS/OS/DeadLock.md)
+- [인터럽트와 시스템콜](https://github.com/asci-00/TIL/blob/main/CS/OS/Interrupt_SystemCall.md)
+- [가상메모리](https://github.com/asci-00/TIL/blob/main/CS/OS/VirtualMemory.md)
+- [케시](https://github.com/asci-00/TIL/blob/main/CS/OS/Cache.md)
