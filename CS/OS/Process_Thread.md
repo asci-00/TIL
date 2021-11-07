@@ -255,7 +255,7 @@
     - 뮤텍스와 모니터는 상호 배제를 함으로써 임계 구역에 하나의 쓰레드만 들어갈 수 있다.
     - C에서 지원하지 않는다.
 
-Q. Binary Semaphore 가 존재한다면 Mutex의 필요성이 있나?
-A. 뮤텍스는 Loking 메커니즘으로 key에 대한 소유권이 존재하며, Semaphore는 Signaling 메커니즘으로 소유권 개념이 존재하지 않으며,
+Q. Binary Semaphore 가 존재한다면 Mutex의 필요성이 있나?<br/>
+A. 뮤텍스는 Loking 메커니즘으로 key에 대한 소유권이 존재하며, Semaphore는 Signaling 메커니즘으로 소유권 개념이 존재하지 않는다는 차이점을 가짐<br/>
 세마포어는 다른 스레드/프로세스가 세마포어 잠금 해제를 요청할 수 있으며, 뮤텍스는 key를 획득한 스레드만 잠금을 해제할 수 있다.
 대답이 이해가 안된다.. 참고[http://gauss.ececs.uc.edu/Courses/c3003/extra/difference-between-semaphore-and-mutex.html]
