@@ -101,5 +101,5 @@
 - [Key](https://github.com/asci-00/TIL/tree/main/CS/DB/Key.md)
 - [Index](https://github.com/asci-00/TIL/blob/main/CS/DB/Index.md)
 - [SQL과 Anomaly](https://github.com/asci-00/TIL/blob/main/CS/DB/SQL_Anomaly.md)
-- [트렌젝션](https://github.com/asci-00/TIL/blob/main/CS/DB/Transection.md)
+- [트렌젝션](https://github.com/asci-00/TIL/blob/main/CS/DB/Transaction.md)
 - [정규화 Normalization](https://github.com/asci-00/TIL/blob/main/CS/DB/Nomalization.md)
