@@ -50,7 +50,7 @@ DB 작업
 
 ## [2. 트랜잭션 연산]
 > TCL *Transaction Control Language*는 트렌젝션을 제어하기 위한 언어를 의미
-> 
+>
 > COMMIT, ROLLBACK, SAVEPOINT 가 존재
 
 ### COMMIT
@@ -72,7 +72,7 @@ DB 작업
 - 기본적으로 ROLLBACK을 실행하면 트랜잭션 시작 전인 원래의 상태로 복구되지만,<br>
     ROLLBACK TO savepoint_name 명령으로 SAVEPOINT를 지정해 놓은 지점으로 복구 가능
 - ROLLBACK 후 COMMIT을 해야 보조기억장치에 반영 가능
-  
+
 <br>
 
 *상황이 주어지면 DB 측면에서 어떻게 해결할 수 있을지 대답할 수 있어야 함*
@@ -97,59 +97,56 @@ DB 작업
 
 <br>
 
-2) Page Buffer Manager or Buffer Manager
+2) Page Buffer Manager / Buffer Manager
 
-DBMS의 Storage System에 속하는 모듈 중 하나로, Main Memory에 유지하는 페이지를 관리하는 모듈
+DBMS의 Storage System에 속하는 모듈 중 하나로,
+
+Main Memory에 유지하는 페이지를 관리하는 모듈
 
 > Buffer 관리 정책에 따라, UNDO 복구와 REDO 복구의 요구 여부를 결정하므로, <br/>트랜잭션 관리에 매우 중요한 결정을 가져옴
 
 <br>
 
+## 트랜잭션 복구
+
+### UNDO 복구
+> 수정된 페이지를 디스크에 출력 했을때 이 페이지가 잘못된 페이지일 경우 **이전의 상태로 되돌리는 복구**
+>
+> 수정된 페이지가 디스크에 출력 될 때는 버퍼 관리자의 버퍼 교체 알고리즘에 따라서 수행 **버퍼의 상태에 따라 결정됨**
+>
+> COMMIT 되기 전까지 디스크에 write하지 않고, 버퍼에 쌓아놓으면 버퍼에 대해서만 UNDO 복구
+>
+> 트랜잭션 로그를 이용하여 오류와 관련된 모든 변경을 취소하여 복구 수행
+
+|정책|설명|
+|--|--|
+|수정된 페이지를 언제든지 디스크에 쓸 수 있는 정책| 대부분의 DBMS가 채택하는 Buffer 관리 정책<br> UNDO logging과 복구를 필요로 함 |
+|수정된 페이지들을 EOT (End Of Transaction)까지는 버퍼에 유지하는 정책 | UNDO 작업이 필요하지 않지만, 매우 큰 메모리 버퍼가 필요 |
+
+
+### REDO
+> 이전 상태로 복구한 후, 실패가 발생하기 전까지의 과정을 그대로 반복
+>
+> 정상적으로 실행 되기까지의 과정을 알아야 하므로, log를 기록
+>
+> 트랜잭션 로그를 이용하여 오류가 발생한 트랜잭션을 재실행하여 복구 수행
+
+|정책|설명|
+|--|--|
+|수정했던 모든 페이지를 Transaction commit 시점에 disk에 반영| transaction이 commit 되었을 때 수정된 페이지들이 disk 상에 반영되므로 redo 필요 없음. |
+|commit 시점에 반영하지 않는 정책 | transaction이 disk 상의 db에 반영되지 않을 수 있기에 redo 복구가 필요. (대부분의 DBMS 정책) |
+
+
+
+
 1) UNDO
 
 
-필요 이유 
-> 
+필요 이유
+
 > 수정된 Page들이 **Buffer 교체 알고리즘에 따라서 디스크에 출력**될 수 있음. Buffer 교체는 **트랜잭션과는 무관하게 buffer의 상태에 따라서, 결정됨**. 이로 인해, 정상적으로 종료되지 않은 transaction이 변경한 page들은 원상 복구 되어야 하는데,  이 복구를 undo라고 함.
 
 - 2개의 정책 (수정된 페이지를 디스크에 쓰는 시점으로 분류)
-
-  steal : 수정된 페이지를 언제든지 디스크에 쓸 수 있는 정책
-
-  - 대부분의 DBMS가 채택하는 Buffer 관리 정책
-  - UNDO logging과 복구를 필요로 함.
-
-  <br>
-
-  ¬steal : 수정된 페이지들을 EOT (End Of Transaction)까지는 버퍼에 유지하는 정책
-
-  - UNDO 작업이 필요하지 않지만, 매우 큰 메모리 버퍼가 필요함.
-
-<br>
-
-1) REDO
-
-이미 commit한 transaction의 수정을 재반영하는 복구 작업
-
-Buffer 관리 정책에 영향을 받음
-
-- Transaction이 종료되는 시점에 해당 transaction이 수정한 page를 디스크에 쓸 것인가 아닌가로 기준.
-
-  <br>
-
-  FORCE : 수정했던 모든 페이지를 Transaction commit 시점에 disk에 반영
-
-  transaction이 commit 되었을 때 수정된 페이지들이 disk 상에 반영되므로 redo 필요 없음.
-
-  <br>
-
-  ¬FORCE : commit 시점에 반영하지 않는 정책
-
-  transaction이 disk 상의 db에 반영되지 않을 수 있기에 redo 복구가 필요. (대부분의 DBMS 정책)
-
-  <br>
-  
-  <br>
 
 #### [참고사항]
 
