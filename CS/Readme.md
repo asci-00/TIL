@@ -10,13 +10,13 @@
 - MVC 패턴
 - Git Github
 
-[운영체제 OperatingSystem](https://github.com/asci-00/TIL/tree/main/CS/OS)
+## [Part2. OperatingSystem](https://github.com/asci-00/TIL/tree/main/CS/OS)
 - 운영체제 (21.11.03)
 - 프로세스 & 스레드 (21.11.04)
 - 인터럽트와 시스템콜
 - 데드락
 
-[네트워크 Network](https://github.com/asci-00/TIL/tree/main/CS/Network)
+## [Part3. 네트워크 Network](https://github.com/asci-00/TIL/tree/main/CS/Network)
 - OSI 7계층 (21.11.05)
 - TCP와 UDP (21.11.05)
 
