@@ -110,7 +110,7 @@
 *ISN **Initialized Sequence Number** 초기 시퀀스 번호 - SYN 패킷의 Sequence Number는 운영체제의 의해서 랜덤하게 생성*<br/>
 *동기화 요청에 대한 답신 - 클라이언트의 시퀀스 넘버에 +1을 해서 ack로 리턴*
 
-### 1. 자료 전송 *3-way handshaking*
+### 2. 자료 전송
 > 1. 송신측에서 window의 크기만큼 data 전송
 ><br/><br/>
 > 2. 수신측에서는 데이터를 받게 되면 ACK로 응답
