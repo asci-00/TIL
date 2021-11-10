@@ -19,7 +19,7 @@
 - OSI 7계층 (21.11.05)
 - TCP와 UDP (21.11.05)
 
-### [Part4. 데이타베이스 Database](https://github.com/asci-00/TIL/tree/main/CS/Network)
+### [Part4. 데이타베이스 Database](https://github.com/asci-00/TIL/tree/main/CS/Database)
 - RDBMS와 NoSQL
 - Key
 - Index
@@ -27,7 +27,7 @@
 - 트렌젝션
 - 정규화 Normalization
 
-### [Part5. 자료구조 Data Structure](https://github.com/asci-00/TIL/tree/main/CS/Network)
+### [Part5. 자료구조 Data Structure](https://github.com/asci-00/TIL/tree/main/CS/DataStructure)
 - 선형 자료구조
 - Heap
 - Tree
