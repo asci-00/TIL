@@ -27,6 +27,15 @@
     >
     > 메모리에 한번에 올라갈 수 없는 대용량을 다룸
 
+## 목차
+
+- [선형 자료구조](https://github.com/asci-00/TIL/blob/main/CS/DataStructure/LinearStructure.md)
+- [힙](https://github.com/asci-00/TIL/blob/main/CS/DataStructure/Heap.md)
+- [트리](https://github.com/asci-00/TIL/blob/main/CS/DataStructure/Tree.md)
+- [맵과 해시테이블](https://github.com/asci-00/TIL/blob/main/CS/DataStructure/Map.md)
+- [그래프](https://github.com/asci-00/TIL/blob/main/CS/DataStructure/Graph.md)
+- [그외 응용자료구조](https://github.com/asci-00/TIL/blob/main/CS/DataStructure/Etc.md)
+
 ## 출처
 
 이미지
