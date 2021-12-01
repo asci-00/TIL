@@ -5,7 +5,11 @@
 
 목차
 - [프로세스와 스레드](https://github.com/asci-00/TIL/tree/main/CS/OS/Process_Thread.md)
+- [IPC](https://github.com/asci-00/TIL/blob/main/CS/OS/Process_Communication.md)
 - [데드락-교착상태](https://github.com/asci-00/TIL/blob/main/CS/OS/DeadLock.md)
-- [인터럽트와 시스템콜](https://github.com/asci-00/TIL/blob/main/CS/OS/Interrupt_SystemCall.md)
+- [스케줄링](https://github.com/asci-00/TIL/blob/main/CS/OS/CPU_Scheduling.md)
 - [메모리관리](https://github.com/asci-00/TIL/blob/main/CS/OS/MemoryManagement.md)
+- [인터럽트와 시스템콜](https://github.com/asci-00/TIL/blob/main/CS/OS/Interrupt_SystemCall.md)
 - [케시](https://github.com/asci-00/TIL/blob/main/CS/OS/Cache.md)
+- [커널](https://github.com/asci-00/TIL/blob/main/CS/OS/Kernel.md)
+- [파일시스템](https://github.com/asci-00/TIL/blob/main/CS/OS/FileSystem.md)
