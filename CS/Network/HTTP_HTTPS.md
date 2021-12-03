@@ -1,14 +1,17 @@
+
 # HTTP와 HTTPS
 
 ### 목차
 - HTTP
-- HTTPS
 - HTTP 보완
-- 요청과 응답
+- HTTPS
+- Request & Response
+- HTTP 버전별 특징
 
 <br/><br/>
 
 ---
+
 ## HTTP
 
 
@@ -32,7 +35,7 @@
 ### **HTTP Method**
 
 | Method  | 설명                                                                                                    |
-| ------- | ------------------------------------------------------------------------------------------------------- |
+| ------- | ------ |
 | GET     | URI가 가진 정보를 검색하기 위해 요청하는 메소드                                                         |
 | HEAD    | GET메소드와 방식은 동일하지만, `응답에 BODY가 없고 응답 코드와 HEAD만 응답하는데 사용`되는 메소드       |
 | POST    | 요청된 자원을 생성하기 위한 메소드                                                                      |
@@ -104,6 +107,59 @@
 <br/><br/>
 
 ---
+
+## HTTP 보완
+
+> HTTP 의 Connectionless, Stateless 특징과 Security 취약점을 보완
+
+### Cookie와 Session
+
+> 무상태 *Stateless* 한 부분을 보완
+
+|          |                        Cookie                        |     Session      |
+| :------: | :--------------------------------------------------: | :--------------: |
+| 저장위치 |                        Client                        |      Server      |
+| 저장형식 |                         Text                         |      Object      |
+| 만료시점 | 쿠키 저장시 설정<br />(설정 없으면 브라우저 종료 시) | 클라이언트가 로그아웃하거나 <br/>설정 시간 동안 반응이 없으면 무효화<br/>정확한 시점 확인 불가 |
+|  리소스  |                 클라이언트의 리소스                  |  서버의 리소스   |
+| 용량제한 |           한 도메인 당 20개, 한 쿠키당 4KB           |     제한없음     |
+
+### *Cookie 사용*
+1. client 가 server로 데이타 request
+2. server에서  Cookie 를 생성 후 header에 cookie를 포함하여 response
+3. client에서 해당 cookie를 로컬에 저장
+4. 다음 동일한 요청시 header에 cookie를 넣어서 request
+5. server에서 cookie를 받고 변경 필요가 있을 시, header에 cookie를 포함하여 다시 response
+
+ex) 아이디 비밀번호 저장 여부 선택, 쇼핑몰 장바구니, 오늘 더 이상 보지 않음 체크, 자동로그인
+
+### *Session 사용*
+1. client 가 server로 데이타 request
+2. server에서 해당 client의 session ID를 발급 후 데이터와 session ID를 response
+3. client에서 해당 session ID를 cookie에 저장
+4. 다음 요청 시, session ID를 같이 요청
+5. server는 session ID를 받으면 별다른 작없없이 session ID로 session에 있는 client 정보를 가져와 사용
+6. 요청을 처리하여 client로 response
+
+ex) 로그인 같이 보안상 중요한 작업 수행용
+
+
+### Keep Alive
+
+> 무연결성 *Connectionless* 한 부분을 보완
+
+### 특징
+- 연결을 바로 종료하지 않고, 추가적인 요청시, 이미 연결된 TCP 가상회선을 재사용
+- HTTP/1.1에서 Default로 지원
+- timeout을 통해 일정 시간 연결이 없을 경우 connection close
+  - 서버의 socket은 한정되어있기 때문에 계속 연결을 유지할 수 없음
+- max를 한 connection당 최대 요청 횟수를 제한함
+- 문제점이 다소 있음 (멍청한 proxy)
+
+<br/><br/>
+
+---
+
 ## HTTPS
 
 > HTTP의 아래와 같은 보안 취약 부분을 보완하기 위해 개발
@@ -124,58 +180,8 @@ PASS
 <br/><br/>
 
 ---
-## HTTP 보완
 
-> HTTP 의 Connectionless, Stateless 한 부분을 보완하는 기술
-
-## 1. Cookie와 Session
-
-> HTTP Stateless 한 부분을 보완
-
-|          |                        Cookie                        |     Session      |
-| :------: | :--------------------------------------------------: | :--------------: |
-| 저장위치 |                        Client                        |      Server      |
-| 저장형식 |                         Text                         |      Object      |
-| 만료시점 | 쿠키 저장시 설정<br />(설정 없으면 브라우저 종료 시) | 클라이언트가 로그아웃하거나 <br/>설정 시간 동안 반응이 없으면 무효화<br/>정확한 시점 확인 불가 |
-|  리소스  |                 클라이언트의 리소스                  |  서버의 리소스   |
-| 용량제한 |           한 도메인 당 20개, 한 쿠키당 4KB           |     제한없음     |
-
-### Cookie 사용
-1. client 가 server로 데이타 request
-2. server에서  Cookie 를 생성 후 header에 cookie를 포함하여 response
-3. client에서 해당 cookie를 로컬에 저장
-4. 다음 동일한 요청시 header에 cookie를 넣어서 request
-5. server에서 cookie를 받고 변경 필요가 있을 시, header에 cookie를 포함하여 다시 response
-
-ex) 아이디 비밀번호 저장 여부 선택, 쇼핑몰 장바구니, 오늘 더 이상 보지 않음 체크, 자동로그인
-
-### Session 사용
-1. client 가 server로 데이타 request
-2. server에서 해당 client의 session ID를 발급 후 데이터와 session ID를 response
-3. client에서 해당 session ID를 cookie에 저장
-4. 다음 요청 시, session ID를 같이 요청
-5. server는 session ID를 받으면 별다른 작없없이 session ID로 session에 있는 client 정보를 가져와 사용
-6. 요청을 처리하여 client로 response
-
-ex) 로그인 같이 보안상 중요한 작업 수행용
-
-
-## 2. Keep Alive
-
-> HTTP Connectionless 한 부분을 보완
-
-### 특징
-- 연결을 바로 종료하지 않고, 추가적인 요청시, 이미 연결된 TCP 가상회선을 재사용
-- HTTP/1.1은 Default로 지원
-- timeout을 통해 일정 시간 연결이 없을 경우 connection close
-  - 서버의 socket은 한정되어있기 때문에 계속 연결을 유지할 수 없음
-- max를 한 connection당 최대 요청 횟수를 제한함
-- 문제점이 다소 있음 (멍청한 proxy)
-
-<br/><br/>
-
----
-## 요청과 응답
+## Request & Response
 
 > HTTP은 통신을 위해 HTTP request / response를 생성함
 >
