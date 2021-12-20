@@ -30,6 +30,8 @@
 > 
 > 메인 메모리 (RAM) 와 CPU 중간에서 처리속도의 차이를 완화하기 위해 사용됨
 
+![image](https://user-images.githubusercontent.com/22098393/146766859-6c6e69e8-6c73-470f-8f0e-0c39b44d9cb0.png)
+
 ### 2. Web Cache
 
 > HTTP Cache 라고 부름
@@ -112,6 +114,19 @@
 > 캐시에서 원하는 데이터를 빠르게 찾기 위해 데이터를 저장하는 기법
 
 - 직접 사상 *Direct Mapping*
+
+![](https://1.bp.blogspot.com/-rl4JsKhfEiw/XYbpNQP9g5I/AAAAAAAACPw/GEFSXbWotVsSia7hB0pFXRcR58ForbHtwCLcBGAsYHQ/s640/%25EC%25BA%25A1%25EC%25B2%2598.JPG)
+
+> 캐시에 데이터를 저장할 때, 지역성의 원리로 인접한 영역을 블록 위치를 의미하는 Tag와 함께 한번에 캐시 메모리에 저장함 ( Block 단위 )
+> 
+> Word 부분이 블록의 크기를 의미하며, Line 부분이 실제 저장된 데이터를 의미 ( Line 데이터는 각자를 구별하기 위해 앞 3비트를 사용함 )
+> 
+> 캐시에서 데이터를 찾을 때, Tag 부분을 통해 탐색함
+
 - 연관 사상 *Associative Mapping*
 - 집합 연관 사상 *Set-associative Mapping*
+
+
+### 출처
+- 이미지: http://itnovice1.blogspot.com/2019/09/cache.html
 
