@@ -189,5 +189,5 @@ TCP/IP의 보안성과 안정성을 해결하는 솔루션을 사용하는 금�
 
 X.25는 네트워크 계층 프로토콜로 알려져 있지만, 물리, 데이터링크, 네트워크 계층을 포함함
 
-<img src="https://user-images.githubusercontent.com/22098393/150134187-89834b0b-8d9f-4381-a01e-cb0c53388b36.png" width="600"/>
+<img src="https://user-images.githubusercontent.com/22098393/150134950-d551658c-b0b1-4ccb-8d60-062a3b14dd38.png" width="600"/>
 
