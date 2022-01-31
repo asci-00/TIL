@@ -1,7 +1,9 @@
-import Component from './component/component'
-import Router from './component/component'
-import './assets/css/common.css'
+import './assets/css/common.css';
+import Component from './component/component';
+import Router from './component/router';
 export default function mainFunction() {
-    Component()
-    Router()
+  Component();
+  Router();
 }
+
+mainFunction();
