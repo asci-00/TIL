@@ -205,7 +205,7 @@ use: [
 ],
 ```
 
-### `Plugin`
+## plugins
 
 > 로더 *Loader*는 resource를 변환하는 과정에 관여하는 반면
 >
@@ -233,5 +233,13 @@ module.exports = {
 
 - `split-chunks-plugin` `clean-webpack-plugin` <br/>
   `image-webpack-loader` `webpack-bundle-analyzer-plugin`이 주로 사용됨
+
+## `reslove` `optimization` `devServer` `cache` `devtool`
+
+## `target` `watch` `externals` `performance` `node`
+
+## `stats` `experiments`
+
+## `amd` `bail` `dependencies` `ignoreWarnings` `etc..`
 
 ![image](https://user-images.githubusercontent.com/22098393/151949822-9c3ac784-ccc2-480e-bf4e-f85cce4ad046.png)
