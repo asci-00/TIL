@@ -233,3 +233,5 @@ module.exports = {
 
 - `split-chunks-plugin` `clean-webpack-plugin` <br/>
   `image-webpack-loader` `webpack-bundle-analyzer-plugin`이 주로 사용됨
+
+![image](https://user-images.githubusercontent.com/22098393/151949822-9c3ac784-ccc2-480e-bf4e-f85cce4ad046.png)
