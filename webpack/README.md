@@ -130,13 +130,19 @@ module.exports = {
 }
 ```
 
-### `Loader`
+## `Loader`
 
-> 로더 *Loader*는 웹팩이 resource를 변환할 때
+> webpack에서는 기본적으로 json / javascript만 인식이 가능
+>
+> 로더 *Loader*는 웹팩이 이 외의 resource를 require / import 할 때,
 >
 > Javascript 파일이 아닌 다른 resource (HTML, CSS, Images, 폰트 등) 들을
 >
 > 변환할 수 있도록 지원
+>
+> _require() / import 구문에서 rules **정규식**에 해당하는 파일이 있을 경우,_
+>
+> _해당 loader를 사용해서 변환_
 
 - `babel-loader` `sass-loader` `file-loader` `vue-loader` `ts-loader` 가 주로 사용됨
 
@@ -203,6 +209,16 @@ use: [
         },
     },
 ],
+```
+
+- 위 규칙은 inline 상에서 아래와 같이 사용 가능
+
+```javascript
+import Styles from 'style-loader!css-loader?modules!less-loader!./styles.css';
+```
+
+```html
+webpack의 loader는 압축, 패키징, 언어 번역 뿐만 아니라 더 많은 세밀한 로직을 유연하게 추가할 수 있음
 ```
 
 ## plugins
