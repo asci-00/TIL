@@ -1,11 +1,10 @@
 # ✏*Today I Learned*
 
 ![twitter_header_photo_2](https://user-images.githubusercontent.com/22098393/160112937-2d43d6cf-146d-422a-8298-52f97023687f.png)
-
-<BR>
+---
 
 ### 📋 WEBPACK
-  
+  ![WEBPACK][webpack-url]
 > 웹펙에 대한 이해
 >
 > `WEBPACK` `BABEL`
@@ -18,10 +17,15 @@
 - [ ] 옵션 사용
 - [ ] 개발 환경 구축
 
-### 📋 TEST LIBRARY
+### 📋 TEST LIBRARY 
+  
 > 리액트 테스트 라이브러리 사용해보기
 >
 > `test library` `jest`
 
-### 📋 SPRING
+### 📋 SPRING 
+  ![JAVA][java-url]
 > 
+
+[webpack-url]: https://shields.io/badge/WEBPACK-v5.70.0-blue?style=for-the-badge
+[java-url]: https://shields.io/badge/JAVA-v8-orange?style=for-the-badge
