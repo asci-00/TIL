@@ -1,15 +1,10 @@
-# ✏TIL
-> Today I Learned 
-> 
-> 내가 그날 배운 것을 정리해보자
-> 
-> 배운 것 뿐 아닌 느낀점도 올려도 됨
+# ✏*Today I Learned*
 
-<BR><BR>
+![twitter_header_photo_2](https://user-images.githubusercontent.com/22098393/160112937-2d43d6cf-146d-422a-8298-52f97023687f.png)
 
----
-## 📋 WEBPACK
-<img src="https://user-images.githubusercontent.com/22098393/150642055-d61115cb-9f23-4d48-b8f0-60654dadeac3.png" width="800"/>
+<BR>
+
+### 📋 WEBPACK
   
 > 웹펙에 대한 이해
 >
@@ -23,25 +18,10 @@
 - [ ] 옵션 사용
 - [ ] 개발 환경 구축
 
-<BR><BR>
-
----
-## 📋 TEST LIBRARY
+### 📋 TEST LIBRARY
 > 리액트 테스트 라이브러리 사용해보기
+>
+> `test library` `jest`
 
-<BR><BR>
-
----
-## 📋 CS
-  
-<img src="https://user-images.githubusercontent.com/22098393/150642260-e25d0b2d-643c-4504-a1fa-d2aa757cec84.png" width="800"/>
-  
-> Computer Science 공부
-  
-- [ ] 개발 기본 상식
-- [ ] 운영체제
-- [ ] 네트워크
-- [ ] 데이터베이스
-- [ ] 지료구조
-- [ ] 알고리즘
-- [ ] 디자인패턴
+### 📋 SPRING
+> 
