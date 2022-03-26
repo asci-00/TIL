@@ -1,11 +1,17 @@
 # webpack configuration
 
 > webpack 에서 사용되는 설정 항목들을 정리
+>
+> webpack은 Node.js **CommonJS** 모듈
+>
+> So, require를 통해 다른 모듈 가져오기 가능
+> .
 
 ![](https://joshua1988.github.io/webpack-guide/assets/img/webpack-bundling.e79747a1.png)
 
 - command line으로 bundling 하기 위해서는 webpack.config.js 작업영역에서 `webpack`을 치면 됨
 - 파일 수정 시, 자동으로 bundling하기 위해서 `webpack`에 `--watch` 옵션을 통해 감시할 수 있음
+- webpack --config config.filename.js 형식을 통해 어떤 webpack config를 적용할지 명시할 수 있음
 
 ## Source Map
 
@@ -16,6 +22,11 @@ module.exports = {
   devtool: 'inline-source-map',
 };
 ```
+
+## Mode
+
+- `development` `production` `none` 의 값을 설정할 수 있음
+- 각 설정에 따라 내장된 환경별 최적화를 활성화 가능 (default: production)
 
 ## entry
 
@@ -162,7 +173,11 @@ module.exports = {
   - `test` 속성은 규칙을 적용할 파일의 형식
   - `use` 속성은 해당 규칙의 파일에 적용할 모듈
 - 하나의 규칙에 여러 loader를 사용하는 경우 use에 list로 나열
+
   - 오른쪽에서 왼족 순서로 적용됨
+
+- `css-loader`는 css를 javascript로 변환해주며, `style-loader`는 css를 style을 주입해주는 역할
+  - head태그의 style태그에 삽입됨..
 
 ```javascript
 module: {
@@ -226,6 +241,25 @@ webpack의 loader는 압축, 패키징, 언어 번역 뿐만 아니라 더 많�
 > 로더 *Loader*는 resource를 변환하는 과정에 관여하는 반면
 >
 > *Plugin*은 해당 결과물의 형태를 바꾸는 역할을 수행
+>
+> 번들을 최적화하거나, 애셋을 관리하고, 또 환경 변수 주입등과 같은 광범위한 작업
+>
+> `apply` 메서드를 가진 객체 (webpack compiler에 의해 호출됨)
+
+```javascript
+const pluginName = 'ConsoleLogOnBuildWebpackPlugin';
+
+class ConsoleLogOnBuildWebpackPlugin {
+  apply(compiler) {
+    compiler.hooks.run.tap(pluginName, (compilation) => {
+      console.log('The webpack build process is starting!');
+    });
+  }
+}
+
+module.exports = ConsoleLogOnBuildWebpackPlugin;
+// Plugin의 내부 소스의 예
+```
 
 ```javascript
 module.exports = {
@@ -244,7 +278,7 @@ module.exports = {
 };
 ```
 
-- `HtmlWebpackPlugin` 웹팩으로 빌드한 결과물로 HTML 파일을 생성해주는 플러그인
+- `HtmlWebpackPlugin` 웹팩으로 빌드한 결과물을 삽입한 HTML 파일을 생성해주는 플러그인
 - `ProgressPlugin` 웹팩의 빌드 진행율을 표시해주는 플러그인
 
 - `split-chunks-plugin` `clean-webpack-plugin` <br/>
@@ -257,5 +291,19 @@ module.exports = {
 ## `stats` `experiments`
 
 ## `amd` `bail` `dependencies` `ignoreWarnings` `etc..`
+
+```javascript
+// 다른 방식으로 plugin을 적용할 수 있음
+const webpack = require('webpack'); //webpack 런타임에 접근하기 위함
+const configuration = require('./webpack.config.js');
+
+let compiler = webpack(configuration);
+
+new webpack.ProgressPlugin().apply(compiler);
+
+compiler.run(function (err, stats) {
+  // ...
+});
+```
 
 ![image](https://user-images.githubusercontent.com/22098393/151949822-9c3ac784-ccc2-480e-bf4e-f85cce4ad046.png)
