@@ -17,23 +17,23 @@
 ```java
 // 일반적인 의존성
 class OwnerController {
-  private OwnerRepository repository = new OwnerRepository();
-  // user repository
+    private OwnerRepository repository = new OwnerRepository();
+    // user repository
 }
 ```
 
 ```java
 class OwnerController {
-  private OwnerRepository repo;
-  public OwnerController(OwnerRepository repo) { this.repo = repo; }
-  // use repository
+    private OwnerRepository repo;
+    public OwnerController(OwnerRepository repo) { this.repo = repo; }
+    // use repository
 }
 class OwnerControllerTest {
-  @Test
-  public void create() {
-    OwnerRepository repo = new OwnerRepository();
-    OwnerController controller = new OwnerController(repo);
-  }
+    @Test
+    public void create() {
+        OwnerRepository repo = new OwnerRepository();
+        OwnerController controller = new OwnerController(repo);
+    }
 }
 ```
 
@@ -47,17 +47,17 @@ class OwnerControllerTest {
 >
 > Bean Annotation이 설정된 Class는 Bean으로 등록되어 IoC Container 내부에서 생성하고 의존성을 관리함
 
-### ❓ 등록하는 방법은?
+### ❓ Bean 등록하는 방법은?
 
-1. Component Scanning
+1. `Component Scanning`
 
 ```markdown
 Spring boot 의 경우는
 @SpringBootApplication ( @ComponentScan Annotation 사용 ) 의 하위 class 중,
-@Component (or 상속받은) Annotation을 가진 class를 Bean으로 등록함
+@Component (or 상속받은) Annotation을 가진 class를 Spring container에 Bean으로 등록
 ```
 
-2. 직접 XML or Java config file 설정
+2. `@Bean`
 
 ```markdown
 @Configuration Annotation 을 가진 class에서
@@ -69,29 +69,47 @@ Spring boot 의 경우는
 
 @SpringBootApplication // SpringBootApplication은 Configuration annotation을 가짐
 public class PetClinicApplication {
-  @Bean
-  public String testBean() {
-    return "bean regist";
-  }
+    @Bean
+    public String testBean() {
+        return "bean regist";
+    }
 
-  public static void main ...
+    public static void main ...
 }
 
 // Controller.js
 
 @RestController
 public class Controller {
-  @Autowired
-  String testBean;
+    @Autowired
+    String testBean;
 
-  @GetMapping("/bean")
-  public String context() {
-    return testBean;
-  }
+    @GetMapping("/bean")
+    public String context() {
+        return testBean;
+    }
 }
 ```
 
-3. Spring lify cycle을 이용한 방식
+3. `xml config file`
+
+> XML에서 수동으로 Bean 등록이 가능
+
+```xml
+<bean id="person" class="패키지명.Person" />
+
+<bean id="group" class="패키지명.Gourp" >
+<property name="(set을뺀 메서드명)" >
+    <ref bean="person" />
+    또는
+    <bean class="패키지명.Person" />
+</property>
+또는
+<property name="(set을뺀 메서드명)" ref="person" />
+</bean>
+```
+
+3. `Spring lify cycle`을 이용
 
 > Spring data jpa 을 사용하여 lify cycle callback 구현하게 되면,
 >
@@ -115,34 +133,69 @@ Bean class에 생성자가 1개만 존재하며, 매개변수 type 이 Bean이�
 ...
 @RestController
 public class Controller {
-  @Autowired
-  ApplicationContext appContext;
+    @Autowired
+    ApplicationContext appContext;
 
-  // @Autowired
-  // BeanType beanName;
-  // 이런식으로 바로 사용도 가능
+    // @Autowired
+    // BeanType beanName;
+    // 이런식으로 바로 사용도 가능
 
-  @GetMapping("/bean")
-  public String context() {
-    return appContext.getBean(OwnerPrepository.class);
-  }
+    @GetMapping("/bean")
+    public String context() {
+        return appContext.getBean(OwnerPrepository.class);
+    }
 }
 ...
 ```
 
-### Dependency Injection
+### ❓ Bean 주입 방법은? _Dependency Injection_
 
 > 필요한 의존성은 어떻게 받아올 수 있을까?
 
-```markdown
-위에서 설명한 바와 같이 @Autowired와 @Inject를 통해 의존성을 주입할 수 있다.
-크게 생성자, 필드, Setter에 Annotation을 붙일 수 있다.
-(최우선 생성자, 되도록이면 Setter , Setter가 없다면 필드 - Setter가 필요 없다면 굳이 생성할 필요는 없음)
+1. 생성자 사용
+
+```java
+@Controller
+public class UserController {
+    private UserDAO userDAO;
+    UserController(UserDAO userDAO) { // 단일 생성자의 경우 @Autowired 불필요
+        this.userDAO = userDAO;
+    }
+} 
 ```
 
-- Java에서는 Bean을 자동으로 생성해서 해당 Bean으로 등록된 class 타입을 사용하는곳에 인스턴스를 생성해서 자동으로 주입해줌
-- (@Autowired나 @Inject를 사용하여 명시적으로 주입할 수 있으며, 생성자, Setter, 필드에 주입한다.)
-- 그런데 여기서 의문점은 순환으로 참조하면 어떻게 되는가??
+2. Setter method 사용
+
+```java
+@Controller
+public class UserController {
+    private UserDAO userDAO;
+    
+    @Autowired
+    public void setUserDAO(UserDAO userDAO) {
+        this.userDAO = userDAO;
+    }
+} 
+```
+
+3. Field 사용
+
+```java
+@Controller
+public class UserController {
+    @Autowired
+    private UserDAO userDAO;
+} 
+```
+
+- 권장 ( 생성자 > Setter > Field )
+
+- 생성자 주입 방식은 `순환참조`를 방지한다.
+    - compile 과정에서 `BeanCurrentlyInCreationException` 에러 발생
+    - Field와 Setter 방식은 runtime 에서 `StackOverflowError` 에러 발생
+
+- 의존주입을 위한 Annotation으로는 @Autowired @Inject @Resource 가 있으며, @Autowired가 주로 사용됨 ([차이점](https://withseungryu.tistory.com/65))
+-
 - Bean으로 등록된 class의 Instance를 생성할 때, 생성자의 인자는 어떻게 처리하는가??
 
 
@@ -155,23 +208,23 @@ public class Controller {
 
 ```java
 class A {
-  public void aMethod() {
-    doSomthing1();
-    /* aMethod logic */
-    doSomthing2();
-  }
-  public void bMethod() {
-    doSomthing1();
-    /* bMethod logic */
-    doSomthing2();
-  }
+    public void aMethod() {
+        doSomthing1();
+        /* aMethod logic */
+        doSomthing2();
+    }
+    public void bMethod() {
+        doSomthing1();
+        /* bMethod logic */
+        doSomthing2();
+    }
 }
 class B {
-  public void cMethod() {
-    doSomthing1();
-    /* cMethod logic */
-    doSomthing2();
-  }
+    public void cMethod() {
+        doSomthing1();
+        /* cMethod logic */
+        doSomthing2();
+    }
 }
 ```
 
@@ -191,29 +244,29 @@ public @interafce LogExecutionTime{ }
 @Component
 @Aspect
 public class LogAspect {
-  @Around("@annotation(LogExecutionTIme)")
-  Logger logger = LoggerFactory.getLogoger(LogAspect.class);
-  
-  public Object logExecutionTIme(ProceedingJoinPoint joinPoint) throws Throwable {
-    StopWatch stopWatch = new StopWatch();
-    stopWatch.start();
-    
-    Object ret = joinPoint.proceed();
-    
-    stopWatch.stop();
-    logger.info(stopWatch.prettyPrint());
-    
-    return ret;
-  }
+    @Around("@annotation(LogExecutionTIme)")
+    Logger logger = LoggerFactory.getLogoger(LogAspect.class);
+
+    public Object logExecutionTIme(ProceedingJoinPoint joinPoint) throws Throwable {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start();
+
+        Object ret = joinPoint.proceed();
+
+        stopWatch.stop();
+        logger.info(stopWatch.prettyPrint());
+
+        return ret;
+    }
 }
 ```
 
 ```java
 // 사용
 public class Controller {
-  @LogExecutionTime
-  public void method() { 
-    //method logic
-  }
+    @LogExecutionTime
+    public void method() {
+        //method logic
+    }
 }
 ```
