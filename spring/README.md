@@ -51,7 +51,7 @@ class OwnerControllerTest {
 
 1. Component Scanning
 
-```shell
+```markdown
 Spring boot 의 경우는
 @SpringBootApplication ( @ComponentScan Annotation 사용 ) 의 하위 class 중,
 @Component (or 상속받은) Annotation을 가진 class를 Bean으로 등록함
@@ -59,7 +59,7 @@ Spring boot 의 경우는
 
 2. 직접 XML or Java config file 설정
 
-```shell
+```markdown
 @Configuration Annotation 을 가진 class에서
 @Bean Annotation 을 가진 Bean을 등록할 수 있음
 ```
@@ -134,16 +134,86 @@ public class Controller {
 
 > 필요한 의존성은 어떻게 받아올 수 있을까?
 
+```markdown
 위에서 설명한 바와 같이 @Autowired와 @Inject를 통해 의존성을 주입할 수 있다.
 크게 생성자, 필드, Setter에 Annotation을 붙일 수 있다.
 (최우선 생성자, 되도록이면 Setter , Setter가 없다면 필드 - Setter가 필요 없다면 굳이 생성할 필요는 없음)
+```
 
-Java에서는 Bean을 자동으로 생성해서 해당 Bean으로 등록된 class 타입을 사용하는곳에
+- Java에서는 Bean을 자동으로 생성해서 해당 Bean으로 등록된 class 타입을 사용하는곳에 인스턴스를 생성해서 자동으로 주입해줌
+- (@Autowired나 @Inject를 사용하여 명시적으로 주입할 수 있으며, 생성자, Setter, 필드에 주입한다.)
+- 그런데 여기서 의문점은 순환으로 참조하면 어떻게 되는가??
+- Bean으로 등록된 class의 Instance를 생성할 때, 생성자의 인자는 어떻게 처리하는가??
 
-인스턴스를 생성해서 자동으로 주입해준다.
 
-(@Autowired나 @Inject를 사용하여 명시적으로 주입할 수 있으며, 생성자, Setter, 필드에 주입한다.)
+## 🔎 AOP _Aspect Oriented Programming_
 
-그런데 여기서 의문점은 순환으로 참조하면 어떻게 되는가??
+> 관점 지향 프로그래밍
 
-Bean으로 등록된 class의 Instance를 생성할 때, 생성자의 인자는 어떻게 처리하는가??
+-  코드들을 부분적으로 나누어서 모듈화
+-  코드상에서 계속 반복해서 쓰는 코드들을 발견할 수 있는 데 이것을 흩어진 관심사 *Crosscutting Concerns*라고 함
+
+```java
+class A {
+  public void aMethod() {
+    doSomthing1();
+    /* aMethod logic */
+    doSomthing2();
+  }
+  public void bMethod() {
+    doSomthing1();
+    /* bMethod logic */
+    doSomthing2();
+  }
+}
+class B {
+  public void cMethod() {
+    doSomthing1();
+    /* cMethod logic */
+    doSomthing2();
+  }
+}
+```
+
+-  ex) DB작업: auto commit false 전환, 작업(특정 로직), 작업을 마친 후 commit 하는 작업 (petclinic의 @Transactional)
+
+### 사용방법
+
+```java
+// Annotation
+@target(ElementType.METHOD) // 대상 : Method
+@Retention(RetentionPolicy.RUNTIME) // 유효범위 : 런타임
+public @interafce LogExecutionTime{ }
+```
+
+```java
+// 구현체
+@Component
+@Aspect
+public class LogAspect {
+  @Around("@annotation(LogExecutionTIme)")
+  Logger logger = LoggerFactory.getLogoger(LogAspect.class);
+  
+  public Object logExecutionTIme(ProceedingJoinPoint joinPoint) throws Throwable {
+    StopWatch stopWatch = new StopWatch();
+    stopWatch.start();
+    
+    Object ret = joinPoint.proceed();
+    
+    stopWatch.stop();
+    logger.info(stopWatch.prettyPrint());
+    
+    return ret;
+  }
+}
+```
+
+```java
+// 사용
+public class Controller {
+  @LogExecutionTime
+  public void method() { 
+    //method logic
+  }
+}
+```
