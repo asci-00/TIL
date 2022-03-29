@@ -40,12 +40,17 @@ class OwnerControllerTest {
 ### Spring의 IoC
 
 > Annotation과 Component Scanning 알고리즘을 통해 IoC를 지원한다.
+> 
+> IoC의 가장 핵심적인 기능을 하는 인터페이스는 `BeanFactory` (IoC Container) 이다.
+> 
 
 ### `Bean`
 
 > Spring IoC Container가 관리하는 객체
 >
 > Bean Annotation이 설정된 Class는 Bean으로 등록되어 IoC Container 내부에서 생성하고 의존성을 관리함
+> 
+> Bean은 기본적으로 Singleton Scope로 생성된다. ( 프로토타입과 상반된 개념 )
 
 ### ❓ Bean 등록하는 방법은?
 
@@ -95,35 +100,43 @@ public class Controller {
 
 > XML에서 수동으로 Bean 등록이 가능
 
+수동으로 Bean 등록 및 DI
 ```xml
+<!--application.xml-->
+<?xml version="1.0" encoding="UTF-8"?>
 <bean id="person" class="패키지명.Person" />
 
 <bean id="group" class="패키지명.Gourp" >
-<property name="(set을뺀 메서드명)" >
-    <ref bean="person" />
-    또는
-    <bean class="패키지명.Person" />
-</property>
-또는
-<property name="(set을뺀 메서드명)" ref="person" />
+  <property name="(set을뺀 메서드명)" >
+      <ref bean="person" />
+      <!--  or <bean class="패키지명.Person" />-->
+  </property>
+  <!-- or <property name="(set을뺀 메서드명)" ref="person" />-->
 </bean>
 ```
 
-3. `Spring lify cycle`을 이용
-
-> Spring data jpa 을 사용하여 lify cycle callback 구현하게 되면,
->
-> Spring lify cycle에서 해당 interface 를 자동으로 Bean으로 등록함
-
 ```java
-public interface OwnerRepository extends Repository<Owner, Integer> { ... }
+public class DemoApplication {
+    public static void main(String[] args) {
+        ApplicationContext context = new ClassPathXmlApplicationContext("application.xml");
+        Strings[] beanDefinitionNames = context.getBeanDefinitionNames();
+        System.out.println(Arrays.toString(beanDefinitionNames)); // Bean 들의 목록이 출력됨
+    }
+}
 ```
 
-Bean class에 생성자가 1개만 존재하며, 매개변수 type 이 Bean이라면 주입 (Authwired 생략 가능 - 원래 생성자 위에 annotaion이 붙어야 했음)
+개선된 방법 - component scan
+```xml
+<!--application.xml-->
+<?xml version="1.0" encoding="UTF-8"?>
+<bean xmlns="...">
+  <context:component-scan base-package="package명"/>
+</bean>
+```
 
 ### `ApplicationContext` IoC Container
 
-> spring 내부적으로 Bean 들을 관리해줌
+> spring 내부적으로 Bean 들을 관리해줌 ( BeanFactory 를 상속받음 )
 >
 > 일반적으로 직접 객체를 사용할 일이 없지만, 이전에 사용했던 방식으로
 >
@@ -198,8 +211,66 @@ public class UserController {
 - Bean은 수정되지 않는 class를 대상으로 등록되어야 하며, 기본적으로 Singleton 방식이다. ([참조](https://velog.io/@gillog/Spring-Bean-%EC%A0%95%EB%A6%AC))
 - Bean으로 등록된 class의 Instance를 생성할 때, 생성자의 인자는 어떻게 처리하는가??
 
+### `@Autowired`
+
+- @Autowired로 주입할 시, 해당 Type의 Bean이 없는 경우 
+  - Error 발생
+  - 해결방법
+    - @Autowired(require = false) 옵션을 변경하면, Error를 발생시키지 않고, 주입할 Bean이 없는 경우, 주입하지 않음 
+- 주입하려는 타겟의 Type을 가지는 Bean이 2개 이상일 경우
+  - ex) Repository 를 상속받는 FirstRepository, SecondRepository 가 존재하며, Repository Type을 주입받는 경우
+  - Error 발생
+  - 해결방법
+```java
+// 주입하고자 하는 Bean의 @Primary annotation 추가
+@Repository @Primary
+public class OneRepository implements Repository { }
+```
+
+```java
+// 주입받는 곳에서 @Qualifier를 통해 어느 class를 주입받을 것인지 선택
+@Service
+public class Service {
+  @Autowired @Qualifier("OneRepository")
+  Repository repository;
+}
+```
+
+```java
+// 주입받고자 하는 class의 이름을 instance 명으로 사용
+@Service
+public class Service {
+  @Autowired
+  Repository oneRepository;
+}
+
+```
+
+```java
+// 주입받을 때, List 형태로 주입을 받아 모든 class를 주입받음
+@Service
+public class Service {
+  @Autowired
+  List<Repository> repositoryList;
+}
+```
+
+### Bean의 lifecycle interface
+
+- LifeCycle interface를 통해 생성 / 의존성 주입 등에 관여할 수 있다.
+
+| Interface            | Type       | Step    | Description                                               |
+|----------------------|------------|---------|-----------------------------------------------------------|
+| @PostConstruct       | Annotation | Create  | Bean 초기화에 사용할 method를 지정                                  |
+| @Bean(initMethod)    | Annotation | Create  | Bean annotation에 initMethod를 지정                           |
+| InitializingBean     | Interface  | Create  | 해당 Bean의 Create 동작을 overriding ( Spring framework에 종속됨 )  |
+| @PreDestory          | Annotation | Destory | method 선언부에 annotation 추가                                 | 
+| @Bean(destoryMethod) | Annotation | Destory | Bean annotation에 destoryMethod를 지정                        |
+| DisposableBean       | Interface | Destory | 해당 Bean의 Destory 동작을 overriding ( Spring framework에 종속됨 ) |
+
 
 ## 🔎 AOP _Aspect Oriented Programming_
+
 
 > 관점 지향 프로그래밍
 
