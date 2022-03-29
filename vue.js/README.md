@@ -8,9 +8,9 @@
 
 ![image](https://user-images.githubusercontent.com/22098393/160514168-acb9242f-3fce-48e0-90f4-f39b7dce4e4f.png)
 
-> Vue.js 공부용 Repository
-> 
-> 기초부터 하나하나 실습해가며 유의미한 단위로 Repository 에 push
+> Vue.js 공부 내용 정리용
+
+[프로젝트 Source](https://github.com/asci-00/Vue.js)
 
 ## Project setup
 ```
