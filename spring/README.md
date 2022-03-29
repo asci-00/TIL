@@ -195,7 +195,7 @@ public class UserController {
     - Field와 Setter 방식은 runtime 에서 `StackOverflowError` 에러 발생
 
 - 의존주입을 위한 Annotation으로는 @Autowired @Inject @Resource 가 있으며, @Autowired가 주로 사용됨 ([차이점](https://withseungryu.tistory.com/65))
--
+- Bean은 수정되지 않는 class를 대상으로 등록되어야 하며, 기본적으로 Singleton 방식이다. ([참조](https://velog.io/@gillog/Spring-Bean-%EC%A0%95%EB%A6%AC))
 - Bean으로 등록된 class의 Instance를 생성할 때, 생성자의 인자는 어떻게 처리하는가??
 
 
@@ -242,7 +242,7 @@ public @interafce LogExecutionTime{ }
 ```java
 // 구현체
 @Component
-@Aspect
+@Aspect // 구현
 public class LogAspect {
     @Around("@annotation(LogExecutionTIme)")
     Logger logger = LoggerFactory.getLogoger(LogAspect.class);
@@ -270,3 +270,57 @@ public class Controller {
     }
 }
 ```
+
+## 🔎 PSA _Portable Service Abstraction_
+
+> 환경의 변화와 관계없이 일관된 방식의 접근을 제공하는 고도로 추상화된 기술
+> 
+> Spring은 POJO 원칙을 엄격히 지킨 PSA 형태의 추상화를 지원
+> 
+> 한 마디로, 잘 만든 인터페이스를 의미
+
+### `PlatformTransactionManager`
+
+```java
+public interface OwnerRepository extends Repository<Owner, Integer> {
+  @Transactional(readOnly = true)
+  Collection<Ower> findByLastName(@Param("lastName") String lastName);
+  
+  @Transactional(readOnly = true)
+  ...
+}
+```
+- @Transactional annotaion은 많은 구현체가 있음
+- 자동으로 Jpa를 사용하게 되면 JpaTransactionManager가 자동으로 등록이 됨
+- Transaction을 처리하는 Aspect는 Bean이 바뀌더라도 코드는 바뀌지 않음
+
+### `Cacheable`
+
+- @EnableCaching 을 통해 캐시를 활성화함
+- 캐시 종류에 따라 Manager를 커스터마이징함
+- ex) `JCacheManager` `ConcurrentMapChcheManager` `EhCacheCacheManager`
+
+```java
+
+@EnableCaching
+@Profile("production")
+class CacheConfig {
+  @Bean
+  public JCacheManagerCustomizer cacheManagerCustomizer() {
+      return cm -> {
+        COnfiguration<Object, Object> cacheConfiguration; //...
+        cm.createCache("vets", cacheConfiguration);
+      };
+  }
+  private Configuration<Object, Object> createCacheConfiguration() {
+      //...
+  }
+  //...
+}
+```
+
+### Spring MVC
+
+> Spring에서 @Controller @RequestMapping ... 등의 코드는
+> 
+> `Servlet` `Reactive` 에 따라 접근 방식이 바뀌지 않고 일관되게 유지됨
