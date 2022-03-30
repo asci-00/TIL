@@ -57,10 +57,47 @@ class OwnerControllerTest {
 1. `Component Scanning`
 
 ```markdown
-Spring boot 의 경우는
-@SpringBootApplication ( @ComponentScan Annotation 사용 ) 의 하위 class 중,
+- Spring boot -
+@SpringBootApplication ( @ComponentScan Annotation 사용 )를 시작점으로, 동일 패키지에 있는 
 @Component (or 상속받은) Annotation을 가진 class를 Spring container에 Bean으로 등록
+따로 등록을 하지 않으면, A패키지에서 B패키지의 Bean을 @Autowired 할 수 없다.
 ```
+
+```java
+// Component Scanning 을 위한 SpringBootApplication Annotation
+// @ComponentScan은 @Component annotation을 Bean으로 등록
+// - 실제 스캐닝은 ConfigurationClassPostProcessor, BeanFactoryPostProcessor에 의해 처리됨
+@Target(value = {ElementType.TYPE})
+@Retention(value = RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@ComponentScan(excludeFilters = {   // excludeFilters에 설정된 filter 를 통해 Bean등록에 제외시킴
+        @ComponentScan.Filter(type = FilterType.CUSTOM, classes = {TypeExcludeFilter.class}),
+        @ComponentScan.Filter(type = FilterType.CUSTOM, classes = {AutoConfigurationExcludeFilter.class})})
+public @interface SpringBootApplication {
+
+  @AliasFor(annotation = EnableAutoConfiguration.class)
+  public Class<?>[] exclude() default {};
+
+  @AliasFor(annotation = EnableAutoConfiguration.class)
+  public String[] excludeName() default {};
+
+  @AliasFor(annotation = ComponentScan.class, attribute = "basePackages")
+  public String[] scanBasePackages() default {};
+
+  @AliasFor(annotation = ComponentScan.class, attribute = "basePackageClasses")
+  public Class<?>[] scanBasePackageClasses() default {};
+
+  @AliasFor(annotation = ComponentScan.class, attribute = "nameGenerator")
+  public Class<? extends BeanNameGenerator> nameGenerator() default BeanNameGenerator.class;
+
+  @AliasFor(annotation = Configuration.class)
+  public boolean proxyBeanMethods() default true;
+}
+```
+
 
 2. `@Bean`
 
@@ -132,6 +169,27 @@ public class DemoApplication {
 <bean xmlns="...">
   <context:component-scan base-package="package명"/>
 </bean>
+```
+
+4. Function을 사용
+
+> 초기 구동 시간에 유리함
+
+```java
+@SpringBootApplication
+public class DemoSpringApplication {
+    @Autowired
+    Serivce service;
+    public static void main(String[] args) {
+        var app = new SpringApplication(DemoSpringApplication.class);
+        app.addInitializers((ApplicationContextInitializer<GenericApplicationContext>) ctx -> {
+            // Bean을 특정 로직을 수행하여 등록할 수 있음
+          ctx.registerBean(Service.class);
+          ctx.registerBean(ApplicationRunner.class, () -> args1 -> System.out.println("Functional Bean Definition!"));
+        });
+        app.run(args);
+    }
+}
 ```
 
 ### `ApplicationContext` IoC Container
@@ -208,8 +266,98 @@ public class UserController {
     - Field와 Setter 방식은 runtime 에서 `StackOverflowError` 에러 발생
 
 - 의존주입을 위한 Annotation으로는 @Autowired @Inject @Resource 가 있으며, @Autowired가 주로 사용됨 ([차이점](https://withseungryu.tistory.com/65))
-- Bean은 수정되지 않는 class를 대상으로 등록되어야 하며, 기본적으로 Singleton 방식이다. ([참조](https://velog.io/@gillog/Spring-Bean-%EC%A0%95%EB%A6%AC))
-- Bean으로 등록된 class의 Instance를 생성할 때, 생성자의 인자는 어떻게 처리하는가??
+- Bean은 내부 property가 수정되지 않는 Utility class를 대상으로 등록되어야 하며, (Thread-safe) 특정 인자에 의존적이지 않아야 한다.
+- 기본적으로 Singleton 방식으로 생성된다. ([참조](https://velog.io/@gillog/Spring-Bean-%EC%A0%95%EB%A6%AC))
+
+```java
+// Proto.java - Prototype Bean
+@Component @Scope("prototype")
+public class Proto { }
+
+// Single.java - Singleton Bean
+@Component
+public class Single { }
+```
+
+```java
+// DemoApplication.java
+public class DemoApplication {
+    @Autowired
+    ApplicationContext ctx;
+    
+  public static void main(String[] args) {
+    System.out.println("Proto > ");
+
+    System.out.println(ctx.getBean(Proto.class)); // package.Proto@57435801
+    System.out.println(ctx.getBean(Proto.class)); // package.Proto@2da66a44
+    System.out.println(ctx.getBean(Proto.class)); // package.Proto@527fc8e   
+    
+    System.out.println("Single > ");
+
+    System.out.println(ctx.getBean(Single.class)); // package.Single@61bfc9bf
+    System.out.println(ctx.getBean(Single.class)); // package.Single@61bfc9bf
+    System.out.println(ctx.getBean(Single.class)); // package.Single@61bfc9bf    
+  }
+}
+```
+
+- Prototype Bean 내부에서는 Singleton Bean을 사용해도 됨
+- Singleton Bean 내부에서 Prototype Bean을 사용하게 되면, 내부 값이 계속해서 같은 값만 참조하므로, 추가적인 설정 필요
+
+1. ProxyMode 사용
+
+```java
+// Proto.java
+// Proto를 Proxy로 만들어주고, Bean이 Proxy Bean으로 등록됨
+@Component @Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS) 
+public class Proto { }
+
+// Single.java - Singleton Bean
+@Component
+public class Single {
+  @Autowired
+  private Proto proto;
+  public Proto getProto() { return proto; }
+}
+
+// DemoApplication.java
+public class DemoApplication {
+  @Autowired
+  ApplicationContext ctx;
+
+  public static void main(String[] args) {
+    System.out.println("Proto > ");
+
+    System.out.println(ctx.getBean(Proto.class)); // package.Proto@57435801
+    System.out.println(ctx.getBean(Proto.class)); // package.Proto@2da66a44
+    System.out.println(ctx.getBean(Proto.class)); // package.Proto@527fc8e   
+
+    System.out.println("Single > ");
+
+    System.out.println(ctx.getBean(Single.class).getProto()); // package.Proto@37425101
+    System.out.println(ctx.getBean(Single.class).getProto()); // package.Proto@7dc6aa44
+    System.out.println(ctx.getBean(Single.class).getProto()); // package.Proto@f2fff8e    
+  }
+}
+```
+
+2. ObjectProvider 사용
+
+```java
+// Proto.java
+@Component @Scope("prototype") 
+public class Proto { }
+
+// Single.java
+@Component
+public class Single {
+  @Autowired
+  private ObjectProvider<Proto> proto;
+  
+  public Proto getProto() { return proto.getIfVailable(); }
+}
+
+```
 
 ### `@Autowired`
 
