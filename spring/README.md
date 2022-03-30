@@ -2,9 +2,9 @@
 
 ### 목차
 
-- IoC
-- AOP
-- PSA
+- [IoC](https://github.com/asci-00/TIL/tree/main/spring#-ioc-inversion-of-control)
+- [AOP](https://github.com/asci-00/TIL/tree/main/spring#-aop-aspect-oriented-programming)
+- [PSA](https://github.com/asci-00/TIL/tree/main/spring#-psa-portable-service-abstraction)
 
 ## 🔎 IoC _Inversion of Control_
 
