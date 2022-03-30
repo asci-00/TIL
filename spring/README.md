@@ -358,7 +358,7 @@ public interface OwnerRepository extends Repository<Owner, Integer> {
   Collection<Ower> findByLastName(@Param("lastName") String lastName);
   
   @Transactional(readOnly = true)
-  ...
+  // db logic
 }
 ```
 - @Transactional annotaion은 많은 구현체가 있음
