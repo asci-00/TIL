@@ -183,6 +183,43 @@ vue create project-name
 > ( 업데이트 시, beforeUpdate, updated hook은 호출됨 )
 
 
+## 외부 라이브러리 moudle화
+
+> 필요한 기능이 Vue.js 라이브러리로 구현되지 않았을 경우, 일반 라이브러리를 결합할 수 있어야 함
+> 
+> ex) Chart, Datepicker, Table, Spinner
+
+- 일반적으로 js에서 domSelector를 사용하여 dom을 조작할 경우, 이는 body 태그가 다 load된 이후에 작업하기 위해<br/>
+body 태그 아래에 기술하거나 window.onload를 사용하여 window가 전부 load된 이후에 수행되도록 한다.
+- Vue.js에서는 위와같은 상황을 mounted life cycle을 사용하여 구현한다.
+- Vue.js에서는 domSelector보다는 refs 사용을 권장한다.
+
+### `Plugin`
+
+> 기능이나 Component를 Vue 프로젝트의 전역에서 사용할 수 있도록 제공
+
+```vue
+// in Vue v2
+// ChartPlugin.js
+import Chart from 'chart.js';
+export default {
+  install(Vue) { Vue.prototype.$_Chart = Chart; } 
+  // $_ 는 Vue에서 권장하는 Plugin Prefix
+}
+
+// main.js
+import Vue from 'vue';
+Vue.use(ChartPlugin);
+new Vue({ render: h => h(App), }).$mount('#app');
+
+// OtherComponent.vue
+export default {
+  created() {
+    this.$_Chart(...);
+  }
+}
+```
+
 [node-url]: https://shields.io/badge/node-v16.13.1-blue?style=for-the-badge
 [npm-url]: https://shields.io/badge/npm-8.1.2-BLUE?style=for-the-badge
 [vue-url]: https://shields.io/badge/vue.js-v3-blue?style=for-the-badge
