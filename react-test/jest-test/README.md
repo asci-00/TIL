@@ -46,6 +46,8 @@
 
 ---
 
+### `테스트 구조`
+
 - 테스트케이스는 기본적으로 아래와 같은 형식을 가진다.
 
 ```javascript
@@ -58,6 +60,8 @@ describe('test scenario name', () => {
     it('test case name2', () => { /* doing test */ });
 });
 ```
+
+### `테스트 수행`
 
 - beforeEach와 afterEach를 활용하여 테스크 케이스마다 수행되어야 할 작업을 정의
   - React 테스트는 일반적으로 React tree를 document의 DOM element에 mount & rendering<br/>(DOM event 수신 용이)
@@ -81,8 +85,39 @@ afterEach(() => {
 });
 ```
 
+### `act()`
+- test-utils는 특정 assertions 전에 unit과 관련된 모든 업데이트가 처리되고,<br/>DOM에 적용되었는 지 확인하는 act() 를 제공함
+- react test library의 render 등의 함수는 일반적으로 <br/>act로 이미 wrapping 되어있기 떄문에, 명시적으로 사용할 일은 드믊
+- 아래 예제의 경우는 ReactDOM의 render method를 사용
+- [Arrange-Act-Assert](http://wiki.c2.com/?ArrangeActAssert) 패턴의 Act에서 유래됨
 
+```javascript
+act(() => { /* 컴포넌트를 렌더링 */ });
+// assertions 수행
+```
 
+```javascript
+// example code
+it("renders with or without a name", async () => {
+    act(() => { render(<Hello />, container); });   // render === ReactDOM.render
+    expect(container.textContent).toBe("Hey, stranger");
+    
+    act(() => { render(<Hello name="Jenny" />, container); });
+    expect(container.textContent).toBe("Hello, Jenny!");
+    
+    act(() => { render(<Hello name="Margaret" />, container); });
+    expect(container.textContent).toBe("Hello, Margaret!");
+    
+    // resolved promises를 적용하려면 `act()`의 비동기 버전을 사용
+    await act(async () => { render(<User id="123" />); });
+});
+```
+
+### `Dummy API Test`
+### `Mocking Module`
+### `Event Handling`
+### `Timer`
+### `Snapshot Test`
 ---
 ## Issue
 
