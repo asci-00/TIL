@@ -87,8 +87,7 @@ afterEach(() => {
 
 ### `act()`
 - test-utils는 특정 assertions 전에 unit과 관련된 모든 업데이트가 처리되고,<br/>DOM에 적용되었는 지 확인하는 act() 를 제공함
-- react test library의 render 등의 함수는 일반적으로 <br/>act로 이미 wrapping 되어있기 떄문에, 명시적으로 사용할 일은 드믊
-- 아래 예제의 경우는 ReactDOM의 render method를 사용
+- react test library의 render 등의 함수는 일반적으로 <br/>act로 이미 wrapping 되어있기 떄문에, 명시적으로 사용할 일은 드믊 <br/>_아래 예제의 경우는 ReactDOM의 render method를 사용_
 - [Arrange-Act-Assert](http://wiki.c2.com/?ArrangeActAssert) 패턴의 Act에서 유래됨
 
 ```javascript
@@ -114,10 +113,38 @@ it("renders with or without a name", async () => {
 ```
 
 ### `Dummy API Test`
+
+- api 요청 등의 작업을 통해 비동기 방식으로 데이터를 가져오는 아래와 같은 코드가 존재한다.
+
+```javascript
+import React, { useState, useEffect } from "react";
+
+export default function Component(props) {
+  const [data, setData] = useState(null);
+
+  async function fetchData(id) {
+    const response = await fetch("/some/path/" + id);
+    setData(await response.json());
+  }
+
+  useEffect(() => { fetchData(props.id) }, [props.id]);
+
+  if (!data) return "loading...";
+
+  return (
+    <details>
+      <summary>{data.id}</summary>
+      <strong>{data.comment}</strong>
+    </details>
+  );
+}
+```
+
 ### `Mocking Module`
 ### `Event Handling`
 ### `Timer`
 ### `Snapshot Test`
+
 ---
 ## Issue
 
