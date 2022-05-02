@@ -1,4 +1,4 @@
-# Spring boot
+# Spring
 
 ### 목차
 
@@ -46,11 +46,102 @@ class OwnerControllerTest {
 
 ### `Bean`
 
-> Spring IoC Container가 관리하는 객체
->
-> Bean Annotation이 설정된 Class는 Bean으로 등록되어 IoC Container 내부에서 생성하고 의존성을 관리함
-> 
-> Bean은 기본적으로 Singleton Scope로 생성된다. ( 프로토타입과 상반된 개념 )
+- Spring IoC Container가 관리하는 객체 
+- Bean Annotation이 설정된 Class는 Bean으로 등록되어 IoC Container 내부에서 생성하고 의존성을 관리함 
+- Bean은 기본적으로 Singleton Scope로 생성된다. ( 프로토타입과 상반된 개념 - [참조](https://velog.io/@gillog/Spring-Bean-%EC%A0%95%EB%A6%AC) )
+- Bean은 내부 property가 수정되지 않는 Utility class를 대상으로 등록되어야 하며, (Thread-safe) 특정 인자에 의존적이지 않아야 한다.
+
+```java
+// Proto.java - Prototype Bean
+@Component @Scope("prototype")
+public class Proto { }
+
+// Single.java - Singleton Bean
+@Component
+public class Single { }
+```
+
+```java
+// DemoApplication.java
+public class DemoApplication {
+    @Autowired
+    ApplicationContext ctx;
+    
+  public static void main(String[] args) {
+    System.out.println("Proto > ");
+
+    System.out.println(ctx.getBean(Proto.class)); // package.Proto@57435801
+    System.out.println(ctx.getBean(Proto.class)); // package.Proto@2da66a44
+    System.out.println(ctx.getBean(Proto.class)); // package.Proto@527fc8e   
+    
+    System.out.println("Single > ");
+
+    System.out.println(ctx.getBean(Single.class)); // package.Single@61bfc9bf
+    System.out.println(ctx.getBean(Single.class)); // package.Single@61bfc9bf
+    System.out.println(ctx.getBean(Single.class)); // package.Single@61bfc9bf    
+  }
+}
+```
+
+- 대표적인 Prototype Bean은 Request Session WebSocket이 있다.
+- Prototype Bean 내부에서는 Singleton Bean을 사용해도 됨
+- Singleton Bean 내부에서 Prototype Bean을 사용하게 되면, 내부 값이 계속해서 같은 값만 참조하므로, 추가적인 설정 필요
+
+1. ProxyMode 사용
+
+```java
+// Proto.java
+// Proto를 Proxy로 만들어주고, Bean이 Proxy Bean으로 등록됨
+@Component @Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS) 
+public class Proto { }
+
+// Single.java - Singleton Bean
+@Component
+public class Single {
+  @Autowired
+  private Proto proto;
+  public Proto getProto() { return proto; }
+}
+
+// DemoApplication.java
+public class DemoApplication {
+  @Autowired
+  ApplicationContext ctx;
+
+  public static void main(String[] args) {
+    System.out.println("Proto > ");
+
+    System.out.println(ctx.getBean(Proto.class)); // package.Proto@57435801
+    System.out.println(ctx.getBean(Proto.class)); // package.Proto@2da66a44
+    System.out.println(ctx.getBean(Proto.class)); // package.Proto@527fc8e   
+
+    System.out.println("Single > ");
+
+    System.out.println(ctx.getBean(Single.class).getProto()); // package.Proto@37425101
+    System.out.println(ctx.getBean(Single.class).getProto()); // package.Proto@7dc6aa44
+    System.out.println(ctx.getBean(Single.class).getProto()); // package.Proto@f2fff8e    
+  }
+}
+```
+
+2. Object-Provider 사용
+
+```java
+// Proto.java
+@Component @Scope("prototype") 
+public class Proto { }
+
+// Single.java
+@Component
+public class Single {
+  @Autowired
+  private ObjectProvider<Proto> proto;
+  
+  public Proto getProto() { return proto.getIfVailable(); }
+}
+```
+
+3. Scoped-proxy
 
 ### ❓ Bean 등록하는 방법은?
 
@@ -266,98 +357,6 @@ public class UserController {
     - Field와 Setter 방식은 runtime 에서 `StackOverflowError` 에러 발생
 
 - 의존주입을 위한 Annotation으로는 @Autowired @Inject @Resource 가 있으며, @Autowired가 주로 사용됨 ([차이점](https://withseungryu.tistory.com/65))
-- Bean은 내부 property가 수정되지 않는 Utility class를 대상으로 등록되어야 하며, (Thread-safe) 특정 인자에 의존적이지 않아야 한다.
-- 기본적으로 Singleton 방식으로 생성된다. ([참조](https://velog.io/@gillog/Spring-Bean-%EC%A0%95%EB%A6%AC))
-
-```java
-// Proto.java - Prototype Bean
-@Component @Scope("prototype")
-public class Proto { }
-
-// Single.java - Singleton Bean
-@Component
-public class Single { }
-```
-
-```java
-// DemoApplication.java
-public class DemoApplication {
-    @Autowired
-    ApplicationContext ctx;
-    
-  public static void main(String[] args) {
-    System.out.println("Proto > ");
-
-    System.out.println(ctx.getBean(Proto.class)); // package.Proto@57435801
-    System.out.println(ctx.getBean(Proto.class)); // package.Proto@2da66a44
-    System.out.println(ctx.getBean(Proto.class)); // package.Proto@527fc8e   
-    
-    System.out.println("Single > ");
-
-    System.out.println(ctx.getBean(Single.class)); // package.Single@61bfc9bf
-    System.out.println(ctx.getBean(Single.class)); // package.Single@61bfc9bf
-    System.out.println(ctx.getBean(Single.class)); // package.Single@61bfc9bf    
-  }
-}
-```
-
-- Prototype Bean 내부에서는 Singleton Bean을 사용해도 됨
-- Singleton Bean 내부에서 Prototype Bean을 사용하게 되면, 내부 값이 계속해서 같은 값만 참조하므로, 추가적인 설정 필요
-
-1. ProxyMode 사용
-
-```java
-// Proto.java
-// Proto를 Proxy로 만들어주고, Bean이 Proxy Bean으로 등록됨
-@Component @Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS) 
-public class Proto { }
-
-// Single.java - Singleton Bean
-@Component
-public class Single {
-  @Autowired
-  private Proto proto;
-  public Proto getProto() { return proto; }
-}
-
-// DemoApplication.java
-public class DemoApplication {
-  @Autowired
-  ApplicationContext ctx;
-
-  public static void main(String[] args) {
-    System.out.println("Proto > ");
-
-    System.out.println(ctx.getBean(Proto.class)); // package.Proto@57435801
-    System.out.println(ctx.getBean(Proto.class)); // package.Proto@2da66a44
-    System.out.println(ctx.getBean(Proto.class)); // package.Proto@527fc8e   
-
-    System.out.println("Single > ");
-
-    System.out.println(ctx.getBean(Single.class).getProto()); // package.Proto@37425101
-    System.out.println(ctx.getBean(Single.class).getProto()); // package.Proto@7dc6aa44
-    System.out.println(ctx.getBean(Single.class).getProto()); // package.Proto@f2fff8e    
-  }
-}
-```
-
-2. ObjectProvider 사용
-
-```java
-// Proto.java
-@Component @Scope("prototype") 
-public class Proto { }
-
-// Single.java
-@Component
-public class Single {
-  @Autowired
-  private ObjectProvider<Proto> proto;
-  
-  public Proto getProto() { return proto.getIfVailable(); }
-}
-
-```
 
 ### `@Autowired`
 
@@ -415,6 +414,13 @@ public class Service {
 | @PreDestory          | Annotation | Destory | method 선언부에 annotation 추가                                 | 
 | @Bean(destoryMethod) | Annotation | Destory | Bean annotation에 destoryMethod를 지정                        |
 | DisposableBean       | Interface | Destory | 해당 Bean의 Destory 동작을 overriding ( Spring framework에 종속됨 ) |
+
+### Environment [Source](https://github.com/asci-00/spring-basic/blob/main/src/main/java/com/example/springboot/AppRunner.java)
+> ApplicationContext extends EnvironmentCapable 
+> 
+> Environment의 Profile 기능은 Bean 을 그룹화함 ( 환경에 따른 Bean 선택 )
+> 
+> 또한 외부 properties 파일을 환경변수로 사용 가능
 
 
 ## 🔎 AOP _Aspect Oriented Programming_

@@ -117,27 +117,58 @@ it("renders with or without a name", async () => {
 - api 요청 등의 작업을 통해 비동기 방식으로 데이터를 가져오는 아래와 같은 코드가 존재한다.
 
 ```javascript
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 export default function Component(props) {
   const [data, setData] = useState(null);
+  const { id } = props;
 
   async function fetchData(id) {
-    const response = await fetch("/some/path/" + id);
+    const response = await fetch(`/data/${id}`);
     setData(await response.json());
   }
 
-  useEffect(() => { fetchData(props.id) }, [props.id]);
+  useEffect(() => { fetchData(id) }, [id]);
 
-  if (!data) return "loading...";
+  if (!data) return 'loading...';
 
   return (
-    <details>
-      <summary>{data.id}</summary>
-      <strong>{data.comment}</strong>
-    </details>
+          <details>
+            <summary>{data.id}</summary>
+            <strong>{data.phone}</strong>
+          </details>
   );
 }
+```
+
+- 위 코드를 테스트 하기 위해 아래와 같은 코드를 작성할 수 있다.
+- 비동기 작업이 끝나기 전의 상태와 작업이 끝난 후의 상태를 검증하기 위해 waitFor 함수를 사용할 수 있다.
+
+```javascript
+import React from 'react';
+
+import { render, waitFor } from '@testing-library/react';
+import AsyncComponent from '../components/AsyncComponent';
+
+it('renders fetch data', async () => {
+  const fakeData = { id: '1', phone: '010-0912-1244' };
+
+  jest.spyOn(globalThis, 'fetch').mockImplementation(() =>
+    Promise.resolve({ json: () => Promise.resolve(fakeData), })
+  );
+
+  const { container } = render(<AsyncComponent id="1" />);
+
+  expect(container.textContent).toBe('loading...');
+
+  // expect(container.querySelector('summary').textContent).toBe(fakeData.id) => Cannot read properties of null
+  // expect(container.querySelector('strong').textContent).toBe(fakeData.phone) => Cannot read properties of null
+  
+  await waitFor(() => expect(container.querySelector('summary').textContent).toBe(fakeData.id));
+  await waitFor(() => expect(container.querySelector('strong').textContent).toBe(fakeData.phone));
+
+  globalThis.fetch.mockRestore();
+});
 ```
 
 ### `Mocking Module`
