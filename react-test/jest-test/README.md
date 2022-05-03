@@ -133,10 +133,10 @@ export default function Component(props) {
   if (!data) return 'loading...';
 
   return (
-          <details>
-            <summary>{data.id}</summary>
-            <strong>{data.phone}</strong>
-          </details>
+    <details>
+      <summary>{data.id}</summary>
+      <strong>{data.phone}</strong>
+    </details>
   );
 }
 ```
@@ -145,10 +145,11 @@ export default function Component(props) {
 - 비동기 작업이 끝나기 전의 상태와 작업이 끝난 후의 상태를 검증하기 위해 waitFor 함수를 사용할 수 있다.
 
 ```javascript
+// test code
 import React from 'react';
 
 import { render, waitFor } from '@testing-library/react';
-import AsyncComponent from '../components/AsyncComponent';
+import AsyncComponent from './AsyncComponent';
 
 it('renders fetch data', async () => {
   const fakeData = { id: '1', phone: '010-0912-1244' };
@@ -160,9 +161,6 @@ it('renders fetch data', async () => {
   const { container } = render(<AsyncComponent id="1" />);
 
   expect(container.textContent).toBe('loading...');
-
-  // expect(container.querySelector('summary').textContent).toBe(fakeData.id) => Cannot read properties of null
-  // expect(container.querySelector('strong').textContent).toBe(fakeData.phone) => Cannot read properties of null
   
   await waitFor(() => expect(container.querySelector('summary').textContent).toBe(fakeData.id));
   await waitFor(() => expect(container.querySelector('strong').textContent).toBe(fakeData.phone));
@@ -172,6 +170,73 @@ it('renders fetch data', async () => {
 ```
 
 ### `Mocking Module`
+
+> 특정 모듈을 테스트 할 때 의존 구성요소 (DoC *dependent-on component*)를 사용할 수 없거나 격리가 필요할 때,
+> 
+> 해당 구성요소를 mocking 하여 정해진 동작을 수행하도록 할 때 사용
+> 
+> 이를 테스트 더블이라고 하며 방식에는 `Dummy` `Stub` `Fake` `Spy` `Mock`이 존재함 
+
+```javascript
+// Main.jsx
+import React from 'react';
+import Map from './DOC';
+
+export default function Contact(props) {
+  const { name, email, site, center } = props;
+  return (
+    <div>
+      <address>
+        Contact {name} via{' '}
+        <a data-testid="email" href={`mailto:${email}`}>email</a>
+        or on their{' '}
+        <a data-testid="site" href={site}>website</a>
+      </address>
+      <Map center={center} />
+    </div>
+  );
+}
+
+// DOC.jsx
+import React from 'react';
+
+import { LoadScript, GoogleMap } from 'react-google-maps';
+
+export default function Map(props) {
+  const { center } = props;
+  return (
+          <LoadScript id="script-loader" googleMapsApiKey="YOUR_API_KEY">
+            <GoogleMap id="example-map" center={center} />
+          </LoadScript>
+  );
+}
+```
+
+```javascript
+// test code
+import React from 'react';
+import { render } from '@testing-library/react';
+import Main from '../components/Mock/Main';
+
+jest.mock('./DOC', () => {
+  return function DummyMap(props) {
+    const { center: { lat, long } } = props;
+    return <div data-testid="map">{lat}:{long}</div>;
+  };
+});
+
+it('should render contact information', () => {
+  const center = { lat: 0, long: 0 };
+  const { container } = render(
+    <Main name="Joni Baez" email="test@example.com" site="http://test.com" center={center} />
+  );
+
+  expect(container.querySelector("[data-testid='email']").getAttribute('href')).toEqual('mailto:test@example.com');
+  expect(container.querySelector('[data-testid="site"]').getAttribute('href')).toEqual('http://test.com');
+  expect(container.querySelector('[data-testid="map"]').textContent).toEqual('0:0');
+});
+```
+
 ### `Event Handling`
 ### `Timer`
 ### `Snapshot Test`
