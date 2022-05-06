@@ -48,7 +48,7 @@
 
 ### `테스트 구조`
 
-- 테스트케이스는 기본적으로 아래와 같은 형식을 가진다.
+> 테스트케이스는 기본적으로 아래와 같은 형식을 가진다.
 
 ```javascript
 let driver = null; // mount 대상
@@ -63,9 +63,9 @@ describe('test scenario name', () => {
 
 ### `테스트 수행`
 
-- beforeEach와 afterEach를 활용하여 테스크 케이스마다 수행되어야 할 작업을 정의
-  - React 테스트는 일반적으로 React tree를 document의 DOM element에 mount & rendering<br/>(DOM event 수신 용이)
-  - 테스트 종료 후 관련된 설정 및 값들을 clean up & DOM mount 해제 _(테스트 실패시에도 수행되어야 함)_
+> beforeEach와 afterEach를 활용하여 테스크 케이스마다 수행되어야 할 작업을 정의
+>  - React 테스트는 일반적으로 React tree를 document의 DOM element에 mount & rendering<br/>(DOM event 수신 용이)
+>  - 테스트 종료 후 관련된 설정 및 값들을 clean up & DOM mount 해제 _(테스트 실패시에도 수행되어야 함)_
 
 ```javascript
 import { unmountComponentAtNode } from "react-dom";
@@ -86,9 +86,14 @@ afterEach(() => {
 ```
 
 ### `act()`
-- test-utils는 특정 assertions 전에 unit과 관련된 모든 업데이트가 처리되고,<br/>DOM에 적용되었는 지 확인하는 act() 를 제공함
-- react test library의 render 등의 함수는 일반적으로 <br/>act로 이미 wrapping 되어있기 떄문에, 명시적으로 사용할 일은 드믊 <br/>_아래 예제의 경우는 ReactDOM의 render method를 사용_
-- [Arrange-Act-Assert](http://wiki.c2.com/?ArrangeActAssert) 패턴의 Act에서 유래됨
+> test-utils는 특정 assertions 전에 unit과 관련된 모든 업데이트가 처리되고,<br/>DOM에 적용되었는 지 확인하는 act() 를 제공함
+> 
+> react test library의 render 등의 함수는 일반적으로 <br/>
+> act로 이미 wrapping 되어있기 떄문에, 명시적으로 사용할 일은 드믊 
+> 
+> _아래 예제의 경우는 ReactDOM의 render method를 사용_
+> 
+> [Arrange-Act-Assert](http://wiki.c2.com/?ArrangeActAssert) 패턴의 Act에서 유래됨
 
 ```javascript
 act(() => { /* 컴포넌트를 렌더링 */ });
@@ -216,7 +221,7 @@ export default function Map(props) {
 // test code
 import React from 'react';
 import { render } from '@testing-library/react';
-import Main from '../components/Mock/Main';
+import Main from './Main';
 
 jest.mock('./DOC', () => {
   return function DummyMap(props) {
@@ -238,7 +243,85 @@ it('should render contact information', () => {
 ```
 
 ### `Event Handling`
+
+> 이벤트가 발생했을 때 컴포넌트에 반영되는 변경사항을 테스트 하기 위해 
+> 
+> element.dispatchEvent 를 통해 event를 발생시킨 후 상태를 검증함 
+
+```javascript
+// EventComponent.jsx
+import React, { useState } from 'react';
+
+export default function Toggle(props) {
+  const [state, setState] = useState(false);
+  const { onChange } = props;
+  return (
+    <button
+      type="submit"
+      onClick={() => {
+        setState((previousState) => !previousState);
+        onChange(!state);
+      }}
+      data-testid="toggle">
+      {state === true ? 'Turn off' : 'Turn on'}
+    </button>
+  );
+}
+
+```
+
+```javascript
+// test code
+import React from 'react';
+import { render } from '@testing-library/react';
+import Toggle from './EventComponent';
+
+it('changes value when clicked', () => {
+  const onChange = jest.fn();
+  const { container } = render(<Toggle onChange={onChange} />);
+
+  const button = container.querySelector('[data-testid=toggle]');
+  expect(button.innerHTML).toBe('Turn on');
+
+  button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+  expect(onChange).toHaveBeenCalledTimes(1);
+  expect(button.innerHTML).toBe('Turn off');
+
+  for (let i = 0; i < 5; i++) button.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+
+  expect(onChange).toHaveBeenCalledTimes(6);
+  expect(button.innerHTML).toBe('Turn on');
+});
+
+```
+
 ### `Timer`
+
+> 컴포넌트가 시간에 따라 상태가 변경되는 경우 (setTimeout api) 
+> 
+> 
+
+```javascript
+// TimerWithComponent.jsx
+import React, { useEffect } from 'react';
+
+export default function Card(props) {
+  const { onSelect } = props;
+
+  useEffect(() => {
+    const timeoutID = setTimeout(() => onSelect(1), 5000);
+    return () => clearTimeout(timeoutID);
+  }, [onSelect]);
+
+  return [1, 2, 3, 4].map((choice) => (
+          <button key={choice} data-testid={choice} onClick={() => onSelect(choice)} type="submit">
+            {choice}
+          </button>
+  ));
+}
+```
+
 ### `Snapshot Test`
 
 ---
