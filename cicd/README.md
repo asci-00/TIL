@@ -19,8 +19,12 @@
 
 
 ---
-## CodeCommit
+## 📃 CodeCommit
 
+> *뛰어난 확장성의 private git repository를 안전하게 호스팅*
+> 
+> -amazon aws-
+> 
 > Git Repository를 활용하여 소스코드를 관리해주는 AWS 서비스로
 > 
 > 지금까지 코드의 관리를 위해서 github 또는 gitlab을 사용해왔는데,
@@ -37,3 +41,37 @@
  github를 사용하여 코드를 관리하며 학습은 AWS 링크로 대체한다.
  
  [CodeCommit](https://aws.amazon.com/ko/codecommit/)
+ 
+---
+## 📃 S3
+
+> *디서나 원하는 데이터를 검색할 수 있도록 구축된 스토리지*
+> 
+> -amazon aws-
+> 
+> simple storage service의 약자로 파일서버 트래픽 증가에 유연하게 대처할 수 있는 서비스이다.
+
+- 많은 사용자 접속 감당
+- 저장할 수 있는 파일 개수 제한 無
+- 1BYTE - 5TB 데이터 저장 서비스
+- REST, SOAP Interface 지원
+
+
+| 용어 | 설명 |
+| --- | --- |
+| `Object` | S3에 저장된 각 데이터를 객체라고 명명 - 하나의 파일 |
+| `Bucket` | 연관된 객체들을 Grouping한 최상위 디렉토리 <br/>버킷 단위로 지역 region을 지정 가능 <br/>버킷 단위로 인증과 접속 제한을 걸 수 있음 |
+| `Version controll` | S3는 객체들의 변화를 저장함 (사용자 실수로 인해 데이터가 손실돼도 대부분 복구 가능) |
+| `RSS` | *Reduced Redundancy Storage*의 약자로 S3객체에 비해 데이터 손실이 높음 But, 물리적 하드에 비해 400배 가량 안전 |
+| `Glacier` | 저렴한 가격으로 데이터를 저장할 수 있는 아마존 storage service |
+
+[S3 Bucket Create](https://s3.console.aws.amazon.com/s3/buckets)
+
+### 버킷 생성
+
+- 버킷 이름 - [버킷 이름 규칙](https://docs.aws.amazon.com/AmazonS3/latest/userguide/bucketnamingrules.html)을 참조하여 고유하게 작성
+- 객체 소유권 - 본인 계정 뿐 아니라 ACL을 통해 다른 AWS계정이 객체를 소유할 수 있음
+- 버킷 엑세스 차단 설정 - 버킷에 접근할 수 있는 권한 부여
+- 버킷 버전 관리 - 활성화시, 모든 객체의 각 버전을 보존, 검색및 복원이 가능
+- 기본 암호화 - 비활성화/활성화 여부
+
