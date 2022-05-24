@@ -183,7 +183,7 @@ vue create project-name
 > ( 업데이트 시, beforeUpdate, updated hook은 호출됨 )
 
 
-## 외부 라이브러리 moudle화
+## 외부 라이브러리 module화
 
 > 필요한 기능이 Vue.js 라이브러리로 구현되지 않았을 경우, 일반 라이브러리를 결합할 수 있어야 함
 > 
