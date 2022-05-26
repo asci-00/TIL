@@ -13,10 +13,10 @@
 ## 목차
 1. CodeCommit으로 소스코드 관리하기
 2. S3 bucket으로 서버 파일 관리하기
-3. CodeBuild로 코드 빌드하기 ( github에서 push시, 자동으로 빌드 )
-4. CodeDeploy를 통해 코드 배포하기
-5. CodePipeline를 활용하여 배포 자동화 하기
-
+3. IAM 역할
+4. CodeBuild로 코드 빌드하기 ( github에서 push시, 자동으로 빌드 )
+5. CodeDeploy를 통해 코드 배포하기
+6. CodePipeline를 활용하여 배포 자동화 하기
 
 ---
 ## 📃 CodeCommit
@@ -74,6 +74,94 @@
 - 버킷 엑세스 차단 설정 - 버킷에 접근할 수 있는 권한 부여
 - 버킷 버전 관리 - 활성화시, 모든 객체의 각 버전을 보존, 검색및 복원이 가능
 - 기본 암호화 - 비활성화/활성화 여부
+
+### 버킷 접근 권한
+
+> 모든 접근을 허용하는 것은 보안상 문제가 있으므로,
+> 
+> S3는 IAM을 통해 자신의 계정 또는 다른 계정의 
+> 
+> S3 버킷에 대한 액세스 정책을 추가할 수 있음
+> 
+> [참고](https://docs.aws.amazon.com/ko_kr/config/latest/developerguide/s3-bucket-policy.html#required-permissions-in-another-account)
+
+1. S3 버킷이 포함된 계정을 사용하여 AWS Management Console에 로그인합니다.
+2. https://console.aws.amazon.com/s3/에서 Amazon S3 콘솔을 엽니다.
+3. AWS Config에서 구성 항목을 전송할 때 사용할 버킷을 선택한 다음 속성을 선택합니다.
+4. 권한을 선택합니다.
+5. [Edit Bucket Policy]를 선택
+6. 정책 설정
+
+---
+## 📃 IAM
+
+> *AWS Identity and Access Management*
+> 
+> AWS 리소스에 대한 액세스를 안전하게 제어할 수 있는 웹 서비스
+> 
+> 아래와 같은 기능을 가짐
+> 
+> - AWS 계정에 대한 공유 액세스
+> - 세분화된 권한
+> - Amazon EC2에서 실행되는 Application을 위한 보안 AWS resource access
+> - 멀티 팩터 인증
+> - 자격 증명 연동
+
+IAM은 JSON으로 권한을 설정할 수 있도록 지원함
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListAllMyBuckets",
+        "s3:GetBucketLocation"
+      ],
+      "Resource": "arn:aws:s3:::*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::BUCKET-NAME",
+      "Condition": {"StringLike": {"s3:prefix": [
+        "",
+        "home/",
+        "home/${aws:username}/"
+      ]}}
+    },
+    {
+      "Effect": "Allow",
+      "Action": "s3:*",
+      "Resource": [
+        "arn:aws:s3:::BUCKET-NAME/home/${aws:username}",
+        "arn:aws:s3:::BUCKET-NAME/home/${aws:username}/*"
+      ]
+    }
+  ]
+}
+```
+
+- SID
+ - type: String, Optional)
+ - Statement ID로써 각 Statement를 구분
+- Effect
+ - 해당 정책에서 Access를 허용할지 거부할지를 표시 (Allow / Deny)
+- Principle
+ - type: Object
+ - 액세스를 허용하거나 거부할 주체(계정, 사용자, 역할 등)를 지정
+ - 리소스 기반 정책에서만 사용
+- Action
+ - type: String, Array
+ - 정책이 허용 혹은 거부하는 작업 목록을 표시
+- Resource
+ - Arn *Amazon Resource Name*으로 설정 / 작업이 적용되는 리소스 목록 지정
+ - 리소스 기반 정책을 생성하는 경우는 선택사항
+- Condition
+ - type: Object, Optional
+ - 정책에서 권한을 부여하는 상황을 지정
+
 
 ---
 ## 📃 CodeBuild
