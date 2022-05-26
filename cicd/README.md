@@ -144,23 +144,23 @@ IAM은 JSON으로 권한을 설정할 수 있도록 지원함
 ```
 
 - SID
- - type: String, Optional)
- - Statement ID로써 각 Statement를 구분
+  - type: String, Optional)
+  - Statement ID로써 각 Statement를 구분
 - Effect
- - 해당 정책에서 Access를 허용할지 거부할지를 표시 (Allow / Deny)
+  - 해당 정책에서 Access를 허용할지 거부할지를 표시 (Allow / Deny)
 - Principle
- - type: Object
- - 액세스를 허용하거나 거부할 주체(계정, 사용자, 역할 등)를 지정
- - 리소스 기반 정책에서만 사용
+  - type: Object
+  - 액세스를 허용하거나 거부할 주체(계정, 사용자, 역할 등)를 지정
+  - 리소스 기반 정책에서만 사용
 - Action
- - type: String, Array
- - 정책이 허용 혹은 거부하는 작업 목록을 표시
+  - type: String, Array
+  - 정책이 허용 혹은 거부하는 작업 목록을 표시
 - Resource
- - Arn *Amazon Resource Name*으로 설정 / 작업이 적용되는 리소스 목록 지정
- - 리소스 기반 정책을 생성하는 경우는 선택사항
+  - Arn *Amazon Resource Name*으로 설정 / 작업이 적용되는 리소스 목록 지정
+  - 리소스 기반 정책을 생성하는 경우는 선택사항
 - Condition
- - type: Object, Optional
- - 정책에서 권한을 부여하는 상황을 지정
+  - type: Object, Optional
+  - 정책에서 권한을 부여하는 상황을 지정
 
 
 ---
