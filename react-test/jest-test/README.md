@@ -44,8 +44,25 @@
   - 호환성 테스트가 어려움
   - 이를 해결하기 위해 Jest는 가상 DOM을 구현 ( 한계점이 존재 )
 
----
+### Query
+> 테스트 수행시 테스트 대상 DOM을 찾기 위한 방법
+> 
+> 매우 다양한 쿼리가 있으며, 공식 사이트에서는 아래와 같은 우선순위로 사용하는 것을 권장
+>
+> 불가피한 상황이 아니면 data-testid 의 dataset을 사용하기를 권장한다.
+> 
+> [참고](https://testing-library.com/docs/queries/about/#priority)
 
+1. `getByLabelText` 
+2. `getByPlaceholderText` 
+3. `getByText` 
+4. `getByDisplayValue` 
+5. `getByAltText` 
+6. `getByTitle` 
+7. `getByRole` 
+8. `getByTestId`
+
+---
 ### `테스트 구조`
 
 > 테스트케이스는 기본적으로 아래와 같은 형식을 가진다.
@@ -61,7 +78,8 @@ describe('test scenario name', () => {
 });
 ```
 
-### `테스트 수행`
+---
+## `테스트 수행`
 
 > beforeEach와 afterEach를 활용하여 테스크 케이스마다 수행되어야 할 작업을 정의
 >  - React 테스트는 일반적으로 React tree를 document의 DOM element에 mount & rendering<br/>(DOM event 수신 용이)
@@ -148,6 +166,8 @@ export default function Component(props) {
 
 - 위 코드를 테스트 하기 위해 아래와 같은 코드를 작성할 수 있다.
 - 비동기 작업이 끝나기 전의 상태와 작업이 끝난 후의 상태를 검증하기 위해 waitFor 함수를 사용할 수 있다.
+- callback 함수가 error 를 발생시키지 않을 때까지 대기 (timeout default 4500ms)
+- second parameter로 timeout을 지정해줄 수 있음
 
 ```javascript
 // test code
@@ -359,3 +379,54 @@ export default function Card(props) {
 $ yarn add enzyme enzyme-adapter-react-16 # yarn
 $ npm install --save enzyme enzyme-adapter-react-16 #npm
 ```
+
+### `mount` vs `shallow`
+
+- mount: 실제로 DOM에 mount한 것과 같은 결과를 가져옴
+  - 하위 컴포넌트도 그대로 rendering 시킴
+  - ```html
+    <ParentComponent> <!-- 해당 Component -->
+        <div class="parent-component">
+            <div class="child-component"/> <!-- 하위 Component -->
+            </div>
+        </div>
+    </ParentComponent>
+    ```
+- shallow: 해당 component만 mount한 결과를 가져옴
+  - 하위 컴포넌트는 rendering 시키지 않음
+  - ```html
+    <div class="parent-component"> <!-- 해당 Component -->
+        <ChildComponent/> <!-- 하위 Component -->
+    </div>
+    ```
+  - 그렇기 때문에 shallow의 wrapper.props()의 경우는 컴포넌트의 props가 아닌 div의 props를 참조함
+  - 
+---
+## `props` & `state`
+
+### `props`
+
+- `mount` 또는 `shallow`의 return object의 props method를 통해 조회 가능
+- ```javascript
+  const wrapper = mount(<Component props="value" />);
+  expect(wrapper.props().props).toBe('value');
+  ```
+  
+### `state`
+
+- Class형 Component는 props의 방식과 마찬가지로 state와 내부 method에 접근이 가능
+- ```javascript
+  const wrapper = mount(<Component props="value" />);
+  expect(wrapper.state().state).toBe('state');
+  wrapper.instance().method();
+  ```
+  
+- Function형 Component는 이처럼 직접적으로 state나 method에 접근이 불가능
+  - state는 state를 사용하는 DOM을 확인하는 방식으로 테스트
+  - method는 method를 사용하는 event를 직접 발생시켜 테스트
+  - ```javascript
+    let decreaseButton = wrapper.findWhere(
+      node => node.type() === 'button' && node.text() === 'click'
+    ); // event trigger
+    decreaseButton.simulate('click'); // simulate
+    ```
