@@ -346,3 +346,16 @@ export default function Card(props) {
   }
 }
 ```
+
+# Enzyme
+
+> jest와는 테스트 대상 또는 목적이 상이함
+> 
+> rendering 결과 보다는 props나 state에 집중하는 테스팅 라이브러리 
+
+### install
+
+```shell
+$ yarn add enzyme enzyme-adapter-react-16 # yarn
+$ npm install --save enzyme enzyme-adapter-react-16 #npm
+```

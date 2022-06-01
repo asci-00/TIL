@@ -2,7 +2,6 @@
 
 ![image](https://user-images.githubusercontent.com/22098393/170934620-002a8c11-975e-4630-b403-1bcd0fb0d577.png)
 
-
 ![NODE][ubuntu-url]
 ![NPM][docker-url]
 ![VUE][docker-compose-url]
