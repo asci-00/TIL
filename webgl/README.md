@@ -64,7 +64,7 @@
 > 
 > 색상을 제공하는 `프래그먼트 셰이더`를 기술해야됨
 
-### [Hello World 실습](https://github.com/asci-00/TIL/webgl/src/figure_webgl.html)
+### [Hello World 실습](https://github.com/asci-00/TIL/blob/main/webgl/src/figure_webgl.html)
 
 > browser가 해석할 수 있는 script태그의 type은 
 > 
