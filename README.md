@@ -3,6 +3,10 @@
 ![160112937-2d43d6cf-146d-422a-8298-52f97023687f](https://user-images.githubusercontent.com/22098393/160238714-8bd28434-ad61-476a-83ac-008847834ce8.png)
 ---
 
+### 📋 Javascript
+
+> [Notion](https://swamp-tracker-c42.notion.site/JavaScript-b8cf3530448b47ba99bf4b0e89c474a7)
+
 ### 📋 WEBPACK
   ![WEBPACK][webpack-url]
 > 웹펙에 대한 이해
