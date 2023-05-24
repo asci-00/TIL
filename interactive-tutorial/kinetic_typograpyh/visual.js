@@ -17,13 +17,15 @@ export class Visual {
       stage.removeChild(this.container);
     }
 
+    // canvas에 draw된 text의 position list load
     this.pos = this.text.setText(
-      'ㅗ',
-      2,
+      'F',
+      10,
       stageWidth,
       stageHeight,
     );
 
+    // particle container 선언 (각 pos를 particle로 생성)
     this.container = new PIXI.ParticleContainer(
       this.pos.length,
       {
@@ -36,8 +38,11 @@ export class Visual {
       },
     );
 
+    // pixi container에 particle container 추가
     stage.addChild(this.container);
 
+    // 각 pos를 particle로 생성 후, particle container에 추가
+    // particle은 내부적으로 pixi sprite를 사용
     this.particles = this.pos.map((item) => {
       const particle = new Particle(item, this.texture);
       this.container.addChild(particle.sprite);
@@ -46,6 +51,7 @@ export class Visual {
   }
 
   animate() {
+    // 현재 mouse pointer에 따른 particle에 반영 (색상 / sprite 위치 갱신 )
     this.particles.forEach((item) => {
       const dx = this.mouse.x - item.x;
       const dy = this.mouse.y - item.y;
