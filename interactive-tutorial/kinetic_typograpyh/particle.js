@@ -1,6 +1,6 @@
 const FRICTION = 0.98;
 const COLOR_SPEED = 0.12;
-const MOVE_SPEED = 0.88;
+const MOVE_SPEED = 0.99;
 
 export class Particle {
   constructor(pos, texture) {
@@ -11,12 +11,12 @@ export class Particle {
     this.savedY = this.y = this.sprite.y = pos.y;
     this.vx = this.vy = 0;
     this.radius = 10;
-    this.savedRgb = 0xf3316e;
-    this.rgb = 0xf3316e;
+    this.savedRgb = pos.color;
+    this.rgb = pos.color; //0xf3316e;
   }
 
   collide() {
-    this.rgb = 0x451966;
+    this.rgb = 0xFFFFFF;
   }
 
   draw() {

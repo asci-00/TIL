@@ -1,26 +1,27 @@
-import { Text } from "./text.js";
 import { Particle } from "./particle.js";
+import { ImageSrc } from "./image.js";
 
 export class Visual {
   constructor() {
-    this.text = new Text();
+    this.image = new ImageSrc();
     this.texture = PIXI.Texture.from('./particle.png');
 
     this.particles = [];
+    this.stream = [];
 
-    this.mouse = { x: 0, y: 0, radius: 30 };
+    this.radius = 30;
+    this.lastMousePos = { x : 0, y: 0 };
     document.addEventListener('pointermove', this.onMove.bind(this), false);
   }
 
-  show(stageWidth, stageHeight, stage) {
+  async show(stageWidth, stageHeight, stage) {
     if(this.container) {
       stage.removeChild(this.container);
     }
 
-    // canvas에 draw된 text의 position list load
-    this.pos = this.text.setText(
-      'F',
-      10,
+    this.pos = await this.image.setImage(
+      'image_sample2.png',
+      3,
       stageWidth,
       stageHeight,
     );
@@ -52,18 +53,21 @@ export class Visual {
 
   animate() {
     // 현재 mouse pointer에 따른 particle에 반영 (색상 / sprite 위치 갱신 )
+    const last = this.stream.shift();
+    const mouse = last ? last : { ...this.lastMousePos };
+
     this.particles.forEach((item) => {
-      const dx = this.mouse.x - item.x;
-      const dy = this.mouse.y - item.y;
+      const dx = mouse.x - item.x;
+      const dy = mouse.y - item.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      const minDist = item.radius + this.mouse.radius;
+      const minDist = item.radius + this.radius;
 
       if (dist < minDist) {
         const angle = Math.atan2(dy, dx);
         const tx = item.x + Math.cos(angle) * minDist;
         const ty = item.y + Math.sin(angle) * minDist;
-        const ax = tx - this.mouse.x;
-        const ay = ty - this.mouse.y;
+        const ax = tx - mouse.x;
+        const ay = ty - mouse.y;
 
         item.vx -= ax;
         item.vy -= ay;
@@ -72,12 +76,14 @@ export class Visual {
       }
 
       item.draw();
-    })
+    });
+
+    this.lastMousePos = {...mouse};
   }
 
   onMove(e) {
-    this.mouse.x = e.clientX;
-    this.mouse.y = e.clientY;
+    const nowPos = { x: e.clientX, y: e.clientY };
+    this.stream.push(nowPos);
   }
 
 }
